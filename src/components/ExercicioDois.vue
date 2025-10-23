@@ -4,7 +4,7 @@
       <li v-for="fruta in frutas" :key="fruta">{{ fruta }}</li>
     </ul>
 
-    <input type="text" id="novaFruta">
+    <input type="text" v-model="novaFruta">
     <button @click="adicionarNovaFruta()" >Adicionar</button>
   </div>
 </template>
@@ -14,22 +14,18 @@ export default {
   name: 'ExercicioDois',
   data(){
     return {
-      frutas: ['Maçã', 'Banana', 'Laranja']
+      frutas: ['Maçã', 'Banana', 'Laranja'],
+      novaFruta: '',
     }
   }, 
   methods: {
     adicionarNovaFruta(){
-      let novaFruta = document.getElementById("novaFruta").value
-      if(!this.frutas.includes(novaFruta)){
-        this.frutas.push(novaFruta)
+      if(!this.frutas.includes(this.novaFruta) && this.novaFruta.trim()){
+        this.frutas.push(this.novaFruta)
       } 
 
-      document.getElementById("novaFruta").value = ''
+      this.novaFruta = ''
     }
   }
 }
 </script>
-
-<style scoped>
-  
-</style>

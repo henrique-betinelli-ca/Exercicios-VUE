@@ -1,34 +1,11 @@
 <template>
 
-  <section>
-    <h1>Exercicio 1</h1>
+  <section v-for="(exercico, index) in exercicios" :key="exercico">
+    <h1>Exercicio {{ index + 1 }}</h1>
     <hr>
-    <ExercicioUm />
+    <component :is="exercico" />
   </section>
 
-  <section>
-    <h1>Exercicio 2</h1>
-    <hr>
-    <ExercicioDois />
-  </section>
-
-  <section>
-    <h1>Exercicio 3</h1>
-    <hr>
-    <ExercicioTres />
-  </section>
-
-  <section>
-    <h1>Exercicio 4</h1>
-    <hr>
-    <ExercicioQuatro />
-  </section>
-
-  <section>
-    <h1>Exercicio 5</h1>
-    <hr>
-    <ExercicioCinco />
-  </section>
 
 </template>
 
@@ -47,6 +24,17 @@ export default {
     ExercicioTres,
     ExercicioQuatro,
     ExercicioCinco,
+  },
+  data() {
+    return {
+      exercicios: [
+        'ExercicioUm',
+        'ExercicioDois',
+        'ExercicioTres',
+        'ExercicioQuatro',
+        'ExercicioCinco'
+      ]
+    }
   }
 }
 </script>
