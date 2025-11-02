@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="divExercicios">
     <ul>
       <li v-for="link in links" :key="link.nome"><a :href="link.url">{{ link.nome }}</a></li>
     </ul>

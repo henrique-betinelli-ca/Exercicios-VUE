@@ -1,8 +1,8 @@
 <template>
-  <div v-for="produto in produtos" :key="produto.nome">
+  <div v-for="produto in produtos" :key="produto.nome" class="divExercicios">
     <p>{{ produto.nome }} - R${{ produto.preco }}</p>
     <p v-show="produto.mostrar">{{ produto.descricao }}</p>
-    <button @click="produto.mostrar = !produto.mostrar" >Mostrar Descrição</button>
+    <button class="botaoExercicios" @click="produto.mostrar = !produto.mostrar" >Mostrar Descrição</button>
   </div>
 </template>
 

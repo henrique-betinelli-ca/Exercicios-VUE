@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="divExercicios">
     <ul>
       <template v-for="usuario in usuarios" :key="usuario.nome">
         <li v-if="usuario.ativo">{{ usuario.nome }}</li>

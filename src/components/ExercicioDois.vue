@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div class="divExercicios">
     <ul>
       <li v-for="fruta in frutas" :key="fruta">{{ fruta }}</li>
     </ul>
 
     <input type="text" v-model="novaFruta">
-    <button @click="adicionarNovaFruta()" >Adicionar</button>
+    <button class="botaoExercicios" @click="adicionarNovaFruta()" >Adicionar</button>
   </div>
 </template>
 
@@ -29,3 +29,13 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  input{
+    width: 120px;
+    border: 2px solid;
+    border-color: rgb(194, 192, 192);
+    border-radius: 8px;
+    padding: 8px;
+  }
+</style>

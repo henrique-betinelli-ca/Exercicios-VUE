@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="divExercicios">
     <p v-if="mostrarMensagem">Bem-vindo ao Vue.js!</p>
-    <button @click="mostrarMensagem = !mostrarMensagem">Alternar mensagem</button>
+    <button class="botaoExercicios" @click="mostrarMensagem = !mostrarMensagem">Alternar mensagem</button>
   </div>
 </template>
 
