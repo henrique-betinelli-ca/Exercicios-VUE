@@ -57,7 +57,6 @@
     }
     h3{
       font-family: Arial, Helvetica, sans-serif;
-      color: rgb(119, 119, 119)
     }
     h4{
       font-size: 13pt;

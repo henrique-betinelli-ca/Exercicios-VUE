@@ -1,6 +1,6 @@
 <template>
-    <button class="botaoExercicios" v-show="!mostrarFormularioParaAdicionarCard && !mostrarFormularioParaDditarDadosCard" @click="mostrarFormularioParaAdicionarCard = true">Novo item</button>
-    <form v-show="mostrarFormularioParaAdicionarCard || mostrarFormularioParaDditarDadosCard" class="formularioNovoCard">
+    <button class="botaoExercicios" v-show="!mostrarFormularioCard" @click="mostrarFormularioCard = true">Novo item</button>
+    <form v-show="mostrarFormularioCard" class="formularioNovoCard">
       <div class="campoGrupo">
         <h2>Titulo</h2>
         <input type="text" class="campoTexto" v-model="cardPrincipalSendoUtilizado.titulo">
@@ -45,23 +45,19 @@
 
       <div class="campoGrupo">
         <h2>Responsável</h2>
-        <input type="text" class="campoTexto" v-model="cardPrincipalSendoUtilizado.Responsavel">
+        <input type="text" class="campoTexto" v-model="cardPrincipalSendoUtilizado.responsavel">
       </div>
 
       <div class="campoGrupo">
         <h2>Prazo</h2>
-        <input type="date" class="campoTexto" v-model="cardPrincipalSendoUtilizado.Prazo">
+        <input type="date" class="campoTexto" v-model="cardPrincipalSendoUtilizado.prazo">
       </div>
 
-      <div v-if="mostrarFormularioParaAdicionarCard">
-        <button class="btnCriarNovoCard" @click.prevent="adicionarNovoCard()">Criar Card</button>
-        <p class="mensagemErro"> {{ mensagemErroParaAdicionarCard }}</p>
-      </div>
-      <div v-if="mostrarFormularioParaDditarDadosCard" class="botoesParaEdicaoDeCard">
+      <div class="botoesParaEnvioDoCard">
         <button class="btnSalvarDadosDoCard" @click.prevent="salvarNovosDadosDoCard()">Salvar</button>
-        <button class="btnCancelarEdicaoDoCard" @click.prevent="cancelarEdicaoDoCard()">Cancelar</button>
-        <p class="mensagemErro"> {{ mensagemErro }}</p>
+        <button class="btnCancelarEnvioDoCard" @click.prevent="cancelarEdicaoDoCard()">Cancelar</button>
       </div>
+      <p class="mensagemErro"> {{ mensagemErroParaAdicionarCard }}</p>
     </form>
 
 </template>
@@ -71,34 +67,33 @@
 export default {
   name: 'FormularioCards',
   props: {
-    CardParaEdicao: {}
+    cardParaEdicao: {}
 },
   data() {
     return {
-      mostrarFormularioParaAdicionarCard: false,
-      mostrarFormularioParaDditarDadosCard: false,
+      mostrarFormularioCard: false,
+      eCardParaEdicao: false,
       mensagemErroParaAdicionarCard: '',
-      cardParaEdicao: {},
       cardPrincipalSendoUtilizado: {
         titulo: '',
         descricao: '',
         coluna: '', 
         prioridade: '',
-        Responsavel: '', 
-        Prazo: '',
+        responsavel: '', 
+        prazo: '',
+        id: '',
       }
     }
   },
   watch: {
-    CardParaEdicao: {
-      handler(novoCard) {
-        if (novoCard){
-          this.cardParaEdicao = novoCard
-          this.cardPrincipalSendoUtilizado = {...this.cardParaEdicao}
-          this.mostrarFormularioParaDditarDadosCard = true
-          this.mostrarFormularioParaAdicionarCard = false
+    cardParaEdicao: {
+      handler(cardParaEdicao) {
+        if (cardParaEdicao){
+          this.cardPrincipalSendoUtilizado = {...cardParaEdicao}
+          this.eCardParaEdicao = true
+          this.mostrarFormularioCard = true
         } else {
-          this.mostrarFormularioParaDditarDadosCard = false
+          this.eCardParaEdicao = false
         }
       },
     }
@@ -106,7 +101,7 @@ export default {
   methods: {
 
     verificarCamposFormulario(){
-      if (!this.cardPrincipalSendoUtilizado.titulo || !this.cardPrincipalSendoUtilizado.coluna || !this.cardPrincipalSendoUtilizado.prioridade || !this.cardPrincipalSendoUtilizado.Responsavel || !this.cardPrincipalSendoUtilizado.Prazo) {
+      if (!this.cardPrincipalSendoUtilizado.titulo || !this.cardPrincipalSendoUtilizado.coluna || !this.cardPrincipalSendoUtilizado.prioridade || !this.cardPrincipalSendoUtilizado.responsavel || !this.cardPrincipalSendoUtilizado.prazo) {
         this.mensagemErroParaAdicionarCard = 'Por favor, preencha os campos anteriores para criar o card.'
         return false
       } else {
@@ -121,33 +116,27 @@ export default {
         descricao: '',
         coluna: '',
         prioridade: '',
-        Responsavel: '',
-        Prazo: ''
+        responsavel: '',
+        prazo: '',
+        id: '',
       }
     },
 
-    adicionarNovoCard() {
-      if (!this.verificarCamposFormulario()){
-        return
-      }
-
-      this.$emit('enviarNovoCards', {...this.cardPrincipalSendoUtilizado})
-
-      this.limparCamposDoCardPrincipalSendoUtilizado()
-
-      this.mostrarFormularioParaAdicionarCard = false
+    gerarIdParaCards(){
+      return Date.now().toString() + Math.random().toString(36)
     },
     
     cancelarEdicaoDoCard() {
-      if (!this.verificarCamposFormulario()){
-        return
-      }
 
-      this.$emit('cancelarEdicaoDoCard')
+      if(this.eCardParaEdicao){
+        this.$emit('edicao-cancelada')
+      }
 
       this.limparCamposDoCardPrincipalSendoUtilizado()
 
-      this.mostrarFormularioParaDditarDadosCard = false
+      this.mensagemErroParaAdicionarCard = ''
+
+      this.mostrarFormularioCard = false
     },
 
     salvarNovosDadosDoCard(){
@@ -155,11 +144,16 @@ export default {
         return
       }
 
-      this.$emit('salvarEdicaoCard', {...this.cardPrincipalSendoUtilizado})
+      if(this.eCardParaEdicao){
+        this.$emit('card-atualizado', {...this.cardPrincipalSendoUtilizado})
+      } else {
+        this.cardPrincipalSendoUtilizado.id = this.gerarIdParaCards()
+        this.$emit('novo-card', {...this.cardPrincipalSendoUtilizado})
+      }
 
       this.limparCamposDoCardPrincipalSendoUtilizado()
 
-      this.mostrarFormularioParaDditarDadosCard = false
+      this.mostrarFormularioCard = false
 
     }
   }
@@ -201,27 +195,14 @@ export default {
     box-sizing: border-box;
   }
 
-  .formularioNovoCard .btnCriarNovoCard {
-    background-color: rgb(85, 85, 85);
-    color: rgb(255, 255, 255);
-    border-radius: 8px;
-    text-decoration: none;
-    border: none;
-    width: 100%;
-    height: 50px;
-    font-size: 12pt;
-    font-family: Arial, Helvetica, sans-serif;
-    margin-top: 10px;
-  }
-
-  .formularioNovoCard .botoesParaEdicaoDeCard {
+  .formularioNovoCard .botoesParaEnvioDoCard {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     gap: 10px;
   }
 
-  .formularioNovoCard .btnSalvarDadosDoCard, .formularioNovoCard .btnCancelarEdicaoDoCard {
+  .formularioNovoCard .btnSalvarDadosDoCard, .formularioNovoCard .btnCancelarEnvioDoCard {
     flex: 1;
     background-color: rgb(85, 85, 85);
     color: rgb(255, 255, 255);
@@ -235,7 +216,7 @@ export default {
     margin-top: 10px;
   }
 
-  .formularioNovoCard .btnCriarNovoCard:hover, .formularioNovoCard .btnSalvarDadosDoCard:hover, .formularioNovoCard .btnCancelarEdicaoDoCard:hover {
+  .formularioNovoCard .btnCriarNovoCard:hover, .formularioNovoCard .btnSalvarDadosDoCard:hover, .formularioNovoCard .btnCancelarEnvioDoCard:hover {
   background-color: rgb(171, 169, 169);
 }
 

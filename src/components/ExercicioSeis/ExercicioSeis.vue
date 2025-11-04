@@ -1,16 +1,16 @@
 <template>
 
   <FormularioCards 
-    :CardParaEdicao="cardParaEdicao" 
-    @enviarNovoCards="passarNovoCard"
-    @cancelarEdicaoDoCard="cardParaEdicao = null"
-    @salvarEdicaoCard="passarCardEditado"
+    :cardParaEdicao="cardParaEdicao" 
+    @novo-card="passarNovoCard"
+    @edicao-cancelada="cardParaEdicao = null"
+    @card-atualizado="passarCardEditado"
   />
 
   <ColunasCards 
     :card="card" 
     :cardEditado="cardEditado"
-    @passarDadosDoCardParaEditar="passarDadosDoCardParaEditar"
+    @card-passado-para-edicao="passarDadosDoCardParaEditar"
   />
 
 </template>
@@ -43,10 +43,7 @@
       },
 
       passarCardEditado(novoCard){ 
-        this.cardEditado = {
-          original: this.cardParaEdicao, 
-          novo: novoCard               
-        }
+        this.cardEditado = novoCard
 
         this.cardParaEdicao = null
       }

@@ -10,10 +10,10 @@
         <div v-for="colunas in cardsPorColuna" :key="colunas.nome" class="areaColunaCards">
             <p v-show="colunas.cards.length === 0" class="MensagemDeColunaVazio">Nada aqui ainda.</p>
             <div v-for="card in colunas.cards" :key="card.titulo" class="card" :class="{ 'card-done': card.coluna === 'Done' }">
-                <div class="cabecarioDoCard" :style="{ backgroundColor: card.prioridade === 'Alta' ? '#5982ae' : card.prioridade === 'Média' ? '#6d9cce' : '#9bc7f5', justifyContent: card.coluna === 'Backlog' ? 'flex-end' : 'space-between'}">
-                    <button class="btnVoltarCard" v-show="card.coluna != 'Backlog' && card.coluna != 'Done'" @click="voltarCardUmaColuna(card)">←</button>
-                    <button class="btnAvancarCard" v-show="card.coluna != 'Done'" @click="avancarCardUmaColuna(card)">→</button>
-                    <button class="btnRestaurarCard" v-show="card.coluna == 'Done'" @click="restaurarCard(card)">Reabrir</button>
+                <div class="cabecarioDoCard" :style="{ backgroundColor: card.prioridade === 'Alta' ? '#34516f' : card.prioridade === 'Média' ? '#517dac' : '#95b8dd', justifyContent: card.coluna === 'Backlog' ? 'flex-end' : 'space-between'}">
+                    <button class="btnVoltarCard" v-show="card.coluna != 'Backlog' && card.coluna != 'Done'" @click="moverCard(card, -1)">←</button>
+                    <button class="btnAvancarCard" v-show="card.coluna != 'Done'" @click="moverCard(card, +1)">→</button>
+                    <button class="btnRestaurarCard" v-show="card.coluna == 'Done'" @click="restaurarCard = card.coluna = 'Backlog'">Reabrir</button>
                 </div>
                 <div class="corpoDoCard">
                     <div class="primeiraColunaDoCard">
@@ -28,11 +28,11 @@
                     </div>
                     <div class="segundaColunaDoCard">
                         <div>
-                            <h2>{{ card.Responsavel }}</h2>
+                            <h2>{{ card.responsavel }}</h2>
                         </div>
                         <div class="dataCard">
-                            <p v-show="new Date(card.Prazo) <= dataAtual && card.coluna != 'Done'" class="alertaAtencaoPrazo" >Atenção ao Prazo!</p>
-                            <h3>{{ card.Prazo }}</h3>
+                            <p v-show="new Date(card.prazo) <= dataAtual && card.coluna != 'Done'" class="alertaAtencaoPrazo" >Atenção ao Prazo!</p>
+                            <h3>{{ card.prazo }}</h3>
                         </div>
                     </div>
                 </div>
@@ -68,12 +68,11 @@
             },
             cardEditado: {
                 handler(novoCard) { 
-                    if(novoCard && novoCard.original) {
-                        
-                        const index = this.todosOsCards.findIndex(c => c.titulo === novoCard.original.titulo) 
+                    if(novoCard) {
+                        const index = this.todosOsCards.findIndex(c => c.id === novoCard.id) 
 
                         if(index !== -1) {
-                            this.todosOsCards.splice(index, 1, {...novoCard.novo})
+                            this.todosOsCards.splice(index, 1, {...novoCard})
                         }
                     }
                 },
@@ -94,10 +93,10 @@
                 const prioridadePeso = {'Alta': 3, 'Média': 2, 'Baixa': 1}
 
                 return this.todosOsCards.slice().sort((cardA, cardB) => {
-                    if(cardA.Prazo < this.dataAtual && cardB.Prazo > this.dataAtual){
+                    if(cardA.prazo < this.dataAtual && cardB.prazo > this.dataAtual){
                         return -1
                     } 
-                    if(cardA.Prazo > this.dataAtual && cardB.Prazo < this.dataAtual){
+                    if(cardA.prazo > this.dataAtual && cardB.prazo < this.dataAtual){
                         return 1
                     }
 
@@ -113,24 +112,20 @@
             }
         },
         methods: {
-            avancarCardUmaColuna(card) {
-                if(card.coluna === 'Backlog'){
-                    card.coluna = 'Doing'
-                } else if(card.coluna == 'Doing'){
-                    card.coluna = 'Done'
+            moverCard(card, direcao) {
+                const fluxo = ['Backlog', 'Doing', 'Done']
+                const indexAtual = fluxo.indexOf(card.coluna)
+                const novoIndex = indexAtual + direcao
+
+                if (novoIndex >= 0 && novoIndex < fluxo.length) {
+                    card.coluna = fluxo[novoIndex]
                 }
             },
-            voltarCardUmaColuna(card){
-                if(card.coluna === 'Doing'){
-                    card.coluna = 'Backlog'
-                }
-            },
-            restaurarCard(card){
-                card.coluna = 'Backlog'
-            },
+
             editarDadosDoCard(card){
-                this.$emit('passarDadosDoCardParaEditar', card)
+                if(card.coluna !== 'Done') this.$emit('card-passado-para-edicao', card)
             },
+
             excluirCard(card) {
 
                 const confirmar = confirm(`Deseja realmente excluir o card "${card.titulo}"?`)
@@ -222,7 +217,7 @@
         font-weight: bold;
     }
     .cabecarioDoCard button:hover {
-        color: #3e5c7b;
+        color: rgb(204, 204, 204);
     }
     .corpoDoCard{
         display: flex;
@@ -263,11 +258,12 @@
         font-size: 11pt;
         margin-top: 0;
         padding: 2px 8px;
-        background: #a3b8ce;
+        color: rgb(236, 236, 236);
+        background-color: rgb(85, 85, 85);
         border-radius: 8px;
     }
     .btnEditarCard, .btnExcluirCard{
-        background-color: #6a819b;
+        background-color: rgb(85, 85, 85);
         color: rgb(236, 236, 236);
         border-radius: 8px;
         text-decoration: none;
@@ -275,5 +271,8 @@
         width: 50%px;
         height: 23px;
         font-size: 10pt;
+    }
+    .btnEditarCard:hover, .btnExcluirCard:hover{
+        background-color: rgb(151, 150, 150);
     }
 </style>
