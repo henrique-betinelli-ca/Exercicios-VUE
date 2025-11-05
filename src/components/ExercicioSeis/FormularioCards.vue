@@ -1,5 +1,5 @@
 <template>
-    <button class="botaoExercicios" v-show="!mostrarFormularioCard" @click="mostrarFormularioCard = true">Novo item</button>
+    <button class="botaoNovoCard" v-show="!mostrarFormularioCard" @click="mostrarFormularioCard = true">Novo item</button>
     <form v-show="mostrarFormularioCard" class="formularioNovoCard">
       <div class="campoGrupo">
         <h2>Titulo</h2>
@@ -67,7 +67,9 @@
 export default {
   name: 'FormularioCards',
   props: {
-    cardParaEdicao: {}
+    cardParaEdicao: {
+      type: Object
+    }
 },
   data() {
     return {
@@ -161,6 +163,20 @@ export default {
 </script>
 
 <style scoped>
+  .botaoNovoCard{
+    background-color:rgb(85, 85, 85);
+    color: rgb(255, 255, 255);
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    width: 120px;
+    height: 45px;
+    font-size: 12pt;
+    margin: 8px;
+  }
+  .botaoNovoCard:hover{
+    background-color: rgb(171, 169, 169);
+  }
   .sectionExercicios { 
     background: white;
     border-radius: 10px;

@@ -47,8 +47,13 @@
     export default {
         name: 'ColunasCards',
         props: {
-            card: {},
-            cardEditado: {},
+            card: {
+                type: Object,
+                required: true
+            },
+            cardEditado: {
+                type: Object,
+            },
         },
 
         data(){
