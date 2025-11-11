@@ -25,8 +25,8 @@
       }
     },
     methods: {
-      irParaExercicio(exercico) {
-        this.$router.push(`/${exercico}`)
+      irParaExercicio(exercicio) {
+        this.$router.push(`/${exercicio}`)
       }
     }
   }
