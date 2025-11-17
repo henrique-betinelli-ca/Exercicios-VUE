@@ -40,7 +40,12 @@ const routes = [
     path: '/:PaginaErro(.*)*',
     name: 'PaginaErro',
     component: () => import('../views/PaginaErro.vue')
-  }
+  },
+  {
+    path: '/ExercicioSete',
+    name: 'ExercicioSete',
+    component: () => import('../views/exercicios/ExercicioSete.vue')
+  },
 ]
 
 const router = createRouter({
