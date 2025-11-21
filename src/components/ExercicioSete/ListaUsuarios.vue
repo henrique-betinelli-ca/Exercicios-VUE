@@ -1,15 +1,23 @@
 <template>
     <v-container class="d-flex flex-column align-center">
-        <p v-if="mensagemDeRetorno">{{ mensagemDeRetorno }}</p>
+
+        <p v-show="mensagemDeRetorno" >{{ mensagemDeRetorno }}</p>
+        <br>
+        <v-progress-circular 
+            v-show="carregandoUsuarios"
+            indeterminate
+        ></v-progress-circular>
+
         <v-card 
             v-for="usuario in usuariosDaPaginaAtual"
             :key="usuario.login.uuid"
             :title="`${usuario.name.first} ${usuario.name.last}`" 
             variant="tonal"
-            class="ma-4 w-75 mx-auto"
+            class="ma-4 w-75"
             rounded="lg"
             elevation="2"
         >
+
             <template #append>
                 <v-btn
                     :icon="usuarioSelecionado === usuario ? 'mdi-chevron-up' : 'mdi-chevron-down'"
@@ -21,7 +29,7 @@
                 
             <v-row v-show="usuarioSelecionado == usuario">
                 <v-col>
-                    <DetalheUsuarios
+                    <DetalhesUsuarios
                         :dadosParaExibicaoDeUsuario="usuario"
                     />
                 </v-col>
@@ -32,14 +40,12 @@
 </template>
 
 <script>
-import DetalheUsuarios from './DetalheUsuarios.vue'
-
-const mensagemDeErroAoCarregarUsuarios = 'Ops, estamos com problema ao carregar os usuários. Tente novamente mais tarde!'
+import DetalhesUsuarios from './DetalhesUsuarios.vue'
 
 export default {
     name: 'ListaUsuarios',
     components: {
-        DetalheUsuarios
+        DetalhesUsuarios
     },
     props: {
         nomeParaBusca: {
@@ -60,6 +66,7 @@ export default {
             usuariosDaPaginaAtual: [],
             usuarioSelecionado: null,
             mensagemDeRetorno: '',
+            carregandoUsuarios: false,
         }
     },
     mounted() {
@@ -76,41 +83,59 @@ export default {
         }
     },
     methods: {
-        carregarUsuariosDaPagina() {
-            if(this.nomeParaBusca){
-                this.usuariosDaPaginaAtual.length = 0
-                fetch('https://randomuser.me/api/?seed=abc&page=1&results=100')
-                    .then(resp => resp.json())
-                    .then(data => {
-                        this.mensagemDeRetorno = ''
-                        this.usuariosDaPaginaAtual = data.results.filter(usuario => {
-                            const nomeCompleto = `${usuario.name.first} ${usuario.name.last}`
-                            return nomeCompleto.includes(this.nomeParaBusca)
-                        })
-                        if(this.usuariosDaPaginaAtual.length == 0) this.mensagemDeRetorno = 'Nenhum usuário com esse nome encontrado!'
-                    })
-                    .catch(() => this.mensagemDeRetorno = mensagemDeErroAoCarregarUsuarios )
-
-            } else{
-                fetch(`https://randomuser.me/api/?seed=abc&page=${this.paginaAtual}&results=${this.numeroDeUsuariosPorPagina}`)
-                    .then(resp => resp.json())
-                    .then(data => {
-                        this.mensagemDeRetorno = ''
-                        if(this.generoParaBusca){
-                            this.usuariosDaPaginaAtual = data.results.filter(usuario => usuario.gender == this.generoParaBusca)
-                        } else{
-                            this.usuariosDaPaginaAtual = data.results
-                        }
-                    })
-                    .catch(() => this.mensagemDeRetorno = mensagemDeErroAoCarregarUsuarios )
-            } 
+        async carregarUsuariosDaPagina(){
+            this.setarMensagemDeRetorno("Carregando...")
+            this.carregandoUsuarios = true
+            try{
+                const data = await this.buscarUsuarios()
+                this.processarUsuarios(data)
+            } catch{
+                this.setarMensagemDeRetorno("Ops, estamos com problema ao carregar os usuários. Tente novamente mais tarde!")
+            }
+            this.carregandoUsuarios = false
         },
+
+        async buscarUsuarios(){
+            this.usuariosDaPaginaAtual.length = 0
+            if(this.nomeParaBusca){
+                const resp = await fetch('https://randomuser.me/api/?seed=abc&page=1&results=100')
+                return resp.json()
+            }
+
+            const resp = await fetch(`https://randomuser.me/api/?seed=abc&page=${this.paginaAtual}&results=${this.numeroDeUsuariosPorPagina}`)
+            return resp.json()
+        },
+
+        processarUsuarios(data) {
+            if(this.nomeParaBusca){
+                this.setarMensagemDeRetorno("")
+                this.usuariosDaPaginaAtual = data.results.filter(usuario => {
+                    const nomeCompleto = `${usuario.name.first} ${usuario.name.last}`
+                    return nomeCompleto.includes(this.nomeParaBusca)
+                })
+
+                if(this.usuariosDaPaginaAtual.length == 0) this.setarMensagemDeRetorno("Nenhum usuário com esse nome encontrado!")
+            
+            } else{
+                this.setarMensagemDeRetorno("")
+                if(this.generoParaBusca){
+                    this.usuariosDaPaginaAtual = data.results.filter(usuario => usuario.gender == this.generoParaBusca)
+                } else{
+                    this.usuariosDaPaginaAtual = data.results
+                }
+            }
+        },
+
         verDetalheDoUsario(usuario){
             if(this.usuarioSelecionado == usuario){
                 this.usuarioSelecionado = null
             } else {
                 this.usuarioSelecionado = usuario
             }
+        },
+
+        setarMensagemDeRetorno(valor){
+            this.mensagemDeRetorno = valor
         }
     },
     watch: {

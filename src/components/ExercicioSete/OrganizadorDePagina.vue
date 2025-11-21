@@ -4,7 +4,7 @@
             <v-select
                 style="max-width: 200px"
                 label="Quantidade por Página"
-                :items="[6, 12, 24]"
+                :items="numeroDeExebicoes"
                 v-model="numeroDeExebicaoPorPagina"
             ></v-select>
         </v-col>
@@ -24,6 +24,7 @@ export default{
     name: 'OrganizadorDePagina',
     data() {
         return {
+            numeroDeExebicoes: [6, 12, 24],
             numeroDeExebicaoPorPagina: 12,
             paginaAtual: 1,
         }
@@ -31,12 +32,13 @@ export default{
     watch: {
         numeroDeExebicaoPorPagina: {
             handler(numeroExebicao){
-                if(numeroExebicao) this.$emit('resultados-por-pagina', this.numeroDeExebicaoPorPagina)
+                if(numeroExebicao) this.$emit('resultados-por-pagina-escolhido', this.numeroDeExebicaoPorPagina)
             }
         },
+
         paginaAtual: {
             handler(paginaAtual){
-                if(paginaAtual) this.$emit('pagina', paginaAtual)
+                if(paginaAtual) this.$emit('pagina-escolhida', paginaAtual)
             }
         }
     }

@@ -4,8 +4,8 @@
             <v-row justify="center">
                 <v-col cols="12" md="10">
                     <FiltrosParaPesquisa 
-                        @nome-para-busca="passarNomeParaBusca"
-                        @genero-para-busca="passarGeneroParaBusca"
+                        @nome-para-busca-preenchido="passarNomeParaBusca"
+                        @genero-para-busca-adicionado="passarGeneroParaBusca"
                         @nome-para-busca-cancelado="nomeParaBusca = null"
                     />
                 </v-col>
@@ -23,8 +23,8 @@
             <v-row row justify="center" class="mt-8">
                 <v-col v-col cols="12" md="8" v-show="!nomeParaBusca">
                     <OrganizadorDePagina 
-                        @resultados-por-pagina="passarNumeroDeUsuariosPorPagina"
-                        @pagina="passarPaginaAtual"
+                        @resultados-por-pagina-escolhido="passarNumeroDeUsuariosPorPagina"
+                        @pagina-escolhida="passarPaginaAtual"
                     />
                 </v-col>
             </v-row>

@@ -1,8 +1,6 @@
 <template>
     <v-row class="d-flex justify-center align-center" no-gutters>
-        <v-col
-            class="d-flex justify-center"
-        >
+        <v-col class="d-flex justify-center">
             <v-text-field
                 v-model="filtroNome"
                 label="Pesquisar"
@@ -18,10 +16,9 @@
             </v-text-field>
         
         </v-col>
-        <v-col
-            class="d-flex justify-center"
-        >
+        <v-col class="d-flex justify-center">
             <v-btn-toggle
+                v-show="!buscandoPorNome"
                 v-model="filtroGenero"
                 rounded
                 group
@@ -44,26 +41,35 @@ export default {
     name: 'FiltrosParaPesquisa',
     data() {
         return{
-            filtroGenero: null,
-            filtroNome: null,
-            mensagemErro: null,
+            filtroGenero: "",
+            filtroNome: "",
+            mensagemErro: "",
+            buscandoPorNome: false,
         }
     }, 
+
     methods: {
+        setarMensagemDeErro(valor) {
+            this.mensagemErro = valor;
+        },
+
         passarFiltroNome(){
             if (this.filtroNome.trim() === "") {
-                this.mensagemErro = "Preencha este campo primeiro!"
+                this.setarMensagemDeErro("Preencha este campo primeiro!")
                 return
             }
 
             this.mensagemErro = ""
-            this.$emit('nome-para-busca', this.filtroNome)
+            this.buscandoPorNome = true
+            this.$emit('nome-para-busca-preenchido', this.filtroNome)
+
         },
         
         campoDeTexto(){
             if (this.filtroNome.trim() != "") {
-                this.mensagemErro = ""
+                this.setarMensagemDeErro("")
             } else {
+                this.buscandoPorNome = false
                 this.$emit('nome-para-busca-cancelado')
             }
         }
@@ -72,7 +78,7 @@ export default {
         filtroGenero: {
             handler(genero){
                 if(genero != ""){
-                    this.$emit('genero-para-busca', this.filtroGenero)
+                    this.$emit('genero-para-busca-adicionado', this.filtroGenero)
                 }
             }
         }
