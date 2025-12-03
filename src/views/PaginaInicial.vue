@@ -22,6 +22,7 @@
           'ExercicioCinco',
           'ExercicioSeis',
           'ExercicioSete',
+          'ExercicioOito',
         ]
       }
     },
