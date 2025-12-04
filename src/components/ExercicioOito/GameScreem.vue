@@ -20,69 +20,85 @@
 </template>
 
 <script>
-import QuestionCards from "../../components/ExercicioOito/QuestionCards.vue";
+    import QuestionCards from "../../components/ExercicioOito/QuestionCards.vue";
 
-export default {
-    name: "GameScreem",
-    data() {
-        return {
-            url: "https://opentdb.com/api.php?",
-            questions: [],
-            questionIndex: 0,
-            answers: [],
-        }
-    },
-    components: {
-        QuestionCards,
-    },
-    props: {
-        questionFilters: {
-            type: Object
+    export default {
+        name: "GameScreem",
+        components: {
+            QuestionCards,
         },
-    },
-    watch: {
-        questionFilters: {
-            handler() {
-                this.getQuestions()
+        data() {
+            return {
+                url: "https://opentdb.com/api.php?",
+                questions: [],
+                questionIndex: 0,
+                answers: [],
+            }
+        },
+        props: {
+            questionFilters: {
+                type: Object,
             },
-            deep: true,
-            immediate: true,
-        }
-    },
-    methods: {
-        queryGenerator() {
-            this.url = `https://opentdb.com/api.php?amount=${this.questionFilters.amount}`;
-
-            if(this.questionFilters.category) {
-                this.url += `&category=${this.questionFilters.category}`;
+            isPlayAgain: {
+                type: Boolean,
             }
-
-            if(this.questionFilters.difficulty) {
-                this.url += `&difficulty=${this.questionFilters.difficulty}`;
-            }
-
-            if(this.questionFilters.type) {
-                this.url += `&type=${this.questionFilters.type}`;
-            }
-
-            return this.url;
         },
-        async getQuestions() {
-            await fetch(this.queryGenerator())
-            .then(resp => resp.json())
-            .then(data => this.questions = data.results || [])
-
+        watch: {
+            questionFilters: {
+                handler() {
+                    this.getQuestions();
+                },
+                deep: true,
+                immediate: true,
+            },
+            isPlayAgain: {
+                handler(isPlayAgain) {
+                    if(isPlayAgain) {
+                        this.answers = [];
+                        this.questionIndex = 0;
+                    }
+                },
+                deep: true,
+                immediate: true,
+            }
         },
-        questionController(answer) {
-            this.answers.push(answer);
+        methods: {
+            queryGenerator() {
+                this.url = `https://opentdb.com/api.php?amount=${this.questionFilters.amount}`;
+
+                if(this.questionFilters.category) {
+                    this.url += `&category=${this.questionFilters.category}`;
+                }
+
+                if(this.questionFilters.difficulty) {
+                    this.url += `&difficulty=${this.questionFilters.difficulty}`;
+                }
+
+                if(this.questionFilters.type) {
+                    this.url += `&type=${this.questionFilters.type}`;
+                }
+
+                return this.url;
+            },
+            async getQuestions() {
+                await fetch(this.queryGenerator())
+                .then(resp => resp.json())
+                .then(data => this.questions = data.results || [])
+                .catch(error => {
+                    if(error) this.$emit("questions-fetch-failed");
+                })
+
+            },
+            questionController(answer) {
+                this.answers.push(answer);
 
 
-            if (this.questionIndex < this.questions.length - 1) {
-                this.questionIndex++;
-            } else {
-                this.$emit("game-ended", this.answers);
+                if (this.questionIndex < this.questions.length - 1) {
+                    this.questionIndex++;
+                } else {
+                    this.$emit("game-ended", this.answers);
+                }
             }
         }
     }
-}
 </script>

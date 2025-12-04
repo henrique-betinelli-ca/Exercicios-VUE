@@ -70,7 +70,7 @@
                     this.cardResults.message = "Unfortunately, the time limit has been reached.";
 
                 } else {
-                    if(this.answersResult.correctAnswer) {
+                    if(this.answersResult.isCorrectAnswer) {
                         this.cardResults.icon = "mdi-check-circle";
                         this.cardResults.title = "Correct";
                         this.cardResults.message = "Congratulations! You got it right!";

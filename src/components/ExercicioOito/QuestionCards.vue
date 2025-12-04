@@ -42,150 +42,156 @@
 </template>
 
 <script>
-import QuestionUtilities from "../../components/ExercicioOito/QuestionUtilities.vue";
-import QuestionResult from "../../components/ExercicioOito/QuestionResult.vue";
+    import QuestionUtilities from "../../components/ExercicioOito/QuestionUtilities.vue";
+    import QuestionResult from "../../components/ExercicioOito/QuestionResult.vue";
 
-export default {
-    name: "QuestionCards",
-    data() {
-        return {
-            questionData: {
-                question: "",
-                allAnswers: [],
-                showAnswers: [],
-            },
-            result: {
-                correctAnswer: false,
-                answer: null,
-                helpWasUsed: false,
-                usedExtraTime: false,
-                isTimeUp: false,
-                score: 0,
-                timeSpent: 0,
-            },
-            answersResult: null,
-            timerKey: 0,
-            timerPaused: false,
-            selectedAnswer: null,
-            answeredQuestion: false,
-        }
-    },
-    components: {
-        QuestionUtilities,
-        QuestionResult,
-    },
-    props: {
-        currentQuestion: {
-            type: Object
+    export default {
+        name: "QuestionCards",
+        components: {
+            QuestionUtilities,
+            QuestionResult,
         },
-    },
-    watch: {
-        currentQuestion: {
-            immediate: true,
-            handler() {
-                this.questionData.question = this.currentQuestion.question;
-                this.answerShuffler();
-                this.timerKey++;   
+        data() {
+            return {
+                questionData: {
+                    question: "",
+                    allAnswers: [],
+                    showAnswers: [],
+                },
+                result: {
+                    isCorrectAnswer: false,
+                    question: null,
+                    answer: null,
+                    allAnswers: [],
+                    helpWasUsed: false,
+                    usedExtraTime: false,
+                    isTimeUp: false,
+                    score: 0,
+                    timeSpent: 0,
+                },
+                answersResult: null,
+                timerKey: 0,
+                timerPaused: false,
+                selectedAnswer: null,
+                answeredQuestion: false,
             }
         },
-        selectedAnswer: {
-            handler(answer) {
-                if(answer) {
-                    this.answeredQuestion = true;
-                } else {
-                    this.answeredQuestion = false;
+        props: {
+            currentQuestion: {
+                type: Object,
+            },
+        },
+        watch: {
+            currentQuestion: {
+                immediate: true,
+                handler() {
+                    this.questionData.question = this.currentQuestion.question;
+                    this.result.question = this.currentQuestion.question;
+                    this.answerShuffler();
+                    this.timerKey++;   
+                }
+            },
+            selectedAnswer: {
+                handler(answer) {
+                    if(answer) {
+                        this.answeredQuestion = true;
+                    } else {
+                        this.answeredQuestion = false;
+                    }
                 }
             }
-        }
-    },
-    methods: {
-        answerShuffler() {
-            this.questionData.allAnswers = [
-                this.currentQuestion.correct_answer,
-                ...this.currentQuestion.incorrect_answers
-            ]
-            
-            this.questionData.showAnswers = this.questionData.allAnswers.sort(() => Math.random() - 0.5);
         },
-        skipQuestion() {
-            this.result.correctAnswer = false;
-            this.result.score = 0;
-            this.result.answer = null;
+        methods: {
+            answerShuffler() {
+                this.questionData.allAnswers = [
+                    this.currentQuestion.correct_answer,
+                    ...this.currentQuestion.incorrect_answers,
+                ];
 
-            this.timerKey++;   
+                const shuffledQuestions = this.questionData.allAnswers.sort(() => Math.random() - 0.5);
+                
+                this.questionData.showAnswers = shuffledQuestions;
+                this.result.allAnswers = shuffledQuestions;
+            },
+            skipQuestion() {
+                this.result.isCorrectAnswer = false;
+                this.result.score = 0;
+                this.result.answer = null;
 
-            this.$emit("question-answer", {...this.result})
+                this.timerKey++;   
+
+                this.$emit("question-answer", {...this.result});
+                
+                this.resetCard();
+                this.resetResults();
+            },
+            sendQuestion() {
+                if(this.selectedAnswer) {
+                    this.calculateResult();
+
+                    this.timerPaused = true;
+
+                    this.answersResult = {...this.result};
+                }
+            },
+            questionController() {
+                this.answersResult = null;
+
+                this.timerKey++;   
+                this.timerPaused = false;
+
+                this.$emit("question-answer", {...this.result});
+
+                this.resetCard();
+                this.resetResults();
+            },
+            calculateResult() {
+                if(this.selectedAnswer == this.currentQuestion.correct_answer) {
+                    this.result.isCorrectAnswer = true;
+                    
+                    if(this.result.helpWasUsed || this.result.usedExtraTime) {
+                        this.result.score = 5;
+                    } else {
+                        this.result.score = 10;
+                    }
+
+                } else {
+                    this.result.isCorrectAnswer = false;
+                    this.result.score = 0;
+                }
+
+                this.result.answer = this.selectedAnswer;
+
+            },
+            resetResults() {
+                this.result.isCorrectAnswer = false;
+                this.result.answer = null;
+                this.result.helpWasUsed = false;
+                this.result.usedExtraTime = false;
+                this.result.isTimeUp = false;
+                this.result.score = 0;
+                this.result.timeSpent = 0;
+            },
+            resetCard() {
+                this.questionData.question = "";
+                this.questionData.allAnswers = [];
+                this.selectedAnswer = null;
+                this.answeredQuestion = false;
+            },
+            questionHelper() {
+                const incorrectOptionsSeparator = this.currentQuestion.incorrect_answers.slice(0, 2);
+
+                this.questionData.showAnswers = this.questionData.showAnswers.filter(options => !incorrectOptionsSeparator.includes(options));
             
-            this.resetCard();
-            this.resetResults();
-        },
-        sendQuestion() {
-            if(this.selectedAnswer) {
-                this.calculateResult()
+                this.result.helpWasUsed = true;
+            },
+            timeExpired() {
+                this.result.isTimeUp = true;
 
                 this.timerPaused = true;
 
-                this.answersResult = {...this.result}
+                this.answersResult = {...this.result};
             }
-        },
-        questionController() {
-            this.answersResult = null
-
-            this.timerKey++;   
-            this.timerPaused = false;
-
-            this.$emit("question-answer", {...this.result});
-
-            this.resetCard();
-            this.resetResults();
-        },
-        calculateResult() {
-            if(this.selectedAnswer == this.currentQuestion.correct_answer) {
-                this.result.correctAnswer = true;
-                
-                if(this.result.helpWasUsed || this.result.usedExtraTime) {
-                    this.result.score = 5;
-                } else {
-                    this.result.score = 10;
-                }
-
-            } else {
-                this.result.correctAnswer = false;
-                this.result.score = 0;
-            }
-
-            this.result.answer = this.selectedAnswer;
-
-        },
-        resetResults() {
-            this.result.correctAnswer = false;
-            this.result.answer = null;
-            this.result.helpWasUsed = false;
-            this.result.usedExtraTime = false;
-            this.result.isTimeUp = false;
-            this.result.score = 0;
-            this.result.timeSpent = 0;
-        },
-        resetCard() {
-            this.questionData.question = "";
-            this.questionData.allAnswers = [];
-            this.selectedAnswer = null;
-            this.answeredQuestion = false;
-        },
-        questionHelper() {
-            const incorrectOptionsSeparator = this.currentQuestion.incorrect_answers.slice(0, 2)
-
-            this.questionData.showAnswers = this.questionData.showAnswers.filter(options => !incorrectOptionsSeparator.includes(options))
-        
-            this.result.helpWasUsed = true;
-        },
-        timeExpired() {
-            this.result.isTimeUp = true;
-
-            this.timerPaused = true;
-
-            this.answersResult = {...this.result};
         }
     }
-}
 </script>

@@ -91,12 +91,25 @@
                 filterControls: FILTER_CONTROLS,
                 categoriesOptions: [],
                 amountOptions: [5, 10],
-                chosenAmount: null,
+                chosenAmount: 5,
                 chosenCategory: null,
                 chosenDifficulty: null,
                 chosenType: null,
                 categoryMenuOpen: false,
             }
+        },
+        props: {
+            isFetchError: {
+                type: Boolean
+            }
+        },
+        watch: {
+           isFetchError: {
+            handler(isFetchError) {
+                if(isFetchError) this.feedbackAlert("Failed to fetch questions.", "An error occurred while fetching the questions. Please try again later.", "error");
+            },
+            deep: true,
+           } 
         },
         methods: {
             async getCategories() {
@@ -113,17 +126,13 @@
             },
 
             playQuiz() {
-                if(!this.chosenAmount) {
-                    this.feedbackAlert("Missing data to start.", "The game could not be started because the number of questions was not selected. Please choose an option to continue.", "warning");
-                    return;
-                }
 
                 this.filterControls = {
                     category: this.chosenCategory,
                     difficulty: this.chosenDifficulty, 
                     type: this.chosenType,
                     amount:  this.chosenAmount,
-                }
+                };
 
                 this.$emit("past-quiz-control", this.filterControls);
             },
@@ -131,9 +140,7 @@
             feedbackAlert(title, message, type) {
                 this.alertReturn = {title, message, status: true, type};
 
-                setTimeout(() => {
-                    this.alertReturn.status = false;
-                }, 10000);
+                setTimeout(() => this.alertReturn.status = false, 10000);
             }
         }
     }

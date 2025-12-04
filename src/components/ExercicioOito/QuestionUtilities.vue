@@ -25,94 +25,94 @@
 
 <script>
 
-export default {
-    name: "QuestionUtilities",
-    data() {
-        return {
-            timeLeft: 30,
-            bonusTime: 0,
-            interval: null,
-            timeBonusUsed: false,
-            helpUsed: false,
-        }
-    },
-    props: {
-        isBooleanQuestion: {
-            type: Boolean
-        },
-        startTimer: {
-            type: Number
-        },
-        pausedTime: {
-            type: Boolean
-        },
-    },
-    mounted() {
-        this.beginTimer();
-    },
-    watch: {
-        startTimer: {
-            handler() {
-                this.resetTimer();
-                this.timeBonusUsed = false;
-                this.bonusTime = 0;
-                this.helpUsed = this.isBooleanQuestion;
+    export default {
+        name: "QuestionUtilities",
+        data() {
+            return {
+                timeLeft: 30,
+                bonusTime: 0,
+                interval: null,
+                timeBonusUsed: false,
+                helpUsed: false,
             }
         },
-        isBooleanQuestion: {
-            immediate: true,
-            handler(value) {
-                this.helpUsed = value;
-            }
+        mounted() {
+            this.beginTimer();
         },
-        pausedTime: {
-            handler(isPaused) {
-                if (isPaused) {
-                    clearInterval(this.interval);
+        props: {
+            isBooleanQuestion: {
+                type: Boolean,
+            },
+            startTimer: {
+                type: Number,
+            },
+            pausedTime: {
+                type: Boolean,
+            },
+        },
+        watch: {
+            startTimer: {
+                handler() {
+                    this.resetTimer();
+                    this.timeBonusUsed = false;
+                    this.bonusTime = 0;
+                    this.helpUsed = this.isBooleanQuestion;
+                }
+            },
+            isBooleanQuestion: {
+                handler(value) {
+                    this.helpUsed = value;
+                },
+                immediate: true,
+            },
+            pausedTime: {
+                handler(isPaused) {
+                    if (isPaused) {
+                        clearInterval(this.interval);
 
-                    const totalTimeAvailable = 30 + this.bonusTime;
-                    const timeSpent = totalTimeAvailable - this.timeLeft;
+                        const totalTimeAvailable = 30 + this.bonusTime;
+                        const timeSpent = totalTimeAvailable - this.timeLeft;
 
-                    this.$emit("update-time", timeSpent);
+                        this.$emit("update-time", timeSpent);
 
-                } else {
-                    if(this.timeLeft > 0) {
-                        this.beginTimer();
+                    } else {
+                        if(this.timeLeft > 0) {
+                            this.beginTimer();
+                        }
                     }
                 }
             }
-        }
-    },
-    methods: {
-        beginTimer() {
-            clearInterval(this.interval);
+        },
+        methods: {
+            beginTimer() {
+                clearInterval(this.interval);
 
-            this.interval = setInterval(() => {
-                if (this.timeLeft > 0) {
-                    this.timeLeft--;
-                } else {
-                    clearInterval(this.interval);
-                    this.$emit("time-expired")
+                this.interval = setInterval(() => {
+                    if (this.timeLeft > 0) {
+                        this.timeLeft--;
+                    } else {
+                        clearInterval(this.interval);
+                        this.$emit("time-expired");
+                    }
+                }, 1000);
+            },
+            resetTimer() {
+                clearInterval(this.interval);
+                this.timeLeft = 30;
+                if(!this.timerPaused) {
+                    this.beginTimer();
                 }
-            }, 1000);
-        },
-        resetTimer() {
-            clearInterval(this.interval);
-            this.timeLeft = 30;
-            if(!this.timerPaused) {
-                this.beginTimer();
+            },
+            addTime() {
+                this.timeLeft += 10;
+                this.bonusTime = 10;
+                this.timeBonusUsed = true;
+                this.$emit("time-bonus-used")
+            },
+            requestFacilitator() {
+                this.helpUsed = true;
+                this.$emit("requested-facilitator")
             }
-        },
-        addTime() {
-            this.timeLeft += 10;
-            this.bonusTime = 10;
-            this.timeBonusUsed = true;
-            this.$emit("time-bonus-used")
-        },
-        requestFacilitator() {
-            this.helpUsed = true;
-            this.$emit("requested-facilitator")
         }
     }
-}
 </script>

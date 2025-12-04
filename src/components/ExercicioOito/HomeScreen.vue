@@ -5,6 +5,7 @@
                 <WelcomeMessage/>
                 <QuizControlPanel
                     @past-quiz-control="ReceiveControlFilters"
+                    :isFetchError="isFetchError"
                 />
             </v-card>
         </v-col>
@@ -12,19 +13,24 @@
 </template>
 
 <script>
-import WelcomeMessage from "./WelcomeMessage.vue";
-import QuizControlPanel from "./QuizControlPanel.vue";
+    import WelcomeMessage from "./WelcomeMessage.vue";
+    import QuizControlPanel from "./QuizControlPanel.vue";
 
-export default {
-    name: 'HomeScreen',
-    components: {
-        QuizControlPanel,
-        WelcomeMessage,
-    },
-    methods: {
-        ReceiveControlFilters(filters) {
-            this.$emit("past-quiz-control", filters);
+    export default {
+        name: "HomeScreen",
+        components: {
+            QuizControlPanel,
+            WelcomeMessage,
+        },
+        props: {
+            isFetchError: {
+                type: Boolean,
+            }
+        },
+        methods: {
+            ReceiveControlFilters(filters) {
+                this.$emit("past-quiz-control", filters);
+            }
         }
     }
-}
 </script>
