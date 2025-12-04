@@ -36,8 +36,6 @@
             <v-select
                 class="w-33"
                 label="Number of questions"
-                item-title="name"
-                item-value="id"
                 :items="amountOptions"
                 v-model="chosenAmount"
             ></v-select>
@@ -107,8 +105,7 @@
            isFetchError: {
             handler(isFetchError) {
                 if(isFetchError) this.feedbackAlert("Failed to fetch questions.", "An error occurred while fetching the questions. Please try again later.", "error");
-            },
-            deep: true,
+            }
            } 
         },
         methods: {

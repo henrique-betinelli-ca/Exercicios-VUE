@@ -45,6 +45,24 @@
     import QuestionUtilities from "../../components/ExercicioOito/QuestionUtilities.vue";
     import QuestionResult from "../../components/ExercicioOito/QuestionResult.vue";
 
+    const RESULT = {
+        isCorrectAnswer: false,
+        question: null,
+        answer: null,
+        allAnswers: [],
+        helpWasUsed: false,
+        usedExtraTime: false,
+        isTimeUp: false,
+        score: 0,
+        timeSpent: 0,
+    };
+
+    const QUESTION_DATA = {
+        question: "",
+        allAnswers: [],
+        showAnswers: [],
+    };
+
     export default {
         name: "QuestionCards",
         components: {
@@ -53,22 +71,8 @@
         },
         data() {
             return {
-                questionData: {
-                    question: "",
-                    allAnswers: [],
-                    showAnswers: [],
-                },
-                result: {
-                    isCorrectAnswer: false,
-                    question: null,
-                    answer: null,
-                    allAnswers: [],
-                    helpWasUsed: false,
-                    usedExtraTime: false,
-                    isTimeUp: false,
-                    score: 0,
-                    timeSpent: 0,
-                },
+                questionData: { ...QUESTION_DATA },
+                result: { ...RESULT },
                 answersResult: null,
                 timerKey: 0,
                 timerPaused: false,
@@ -164,17 +168,10 @@
 
             },
             resetResults() {
-                this.result.isCorrectAnswer = false;
-                this.result.answer = null;
-                this.result.helpWasUsed = false;
-                this.result.usedExtraTime = false;
-                this.result.isTimeUp = false;
-                this.result.score = 0;
-                this.result.timeSpent = 0;
+                this.result = { ...RESULT }
             },
             resetCard() {
-                this.questionData.question = "";
-                this.questionData.allAnswers = [];
+                this.questionData = { ...QUESTION_DATA }
                 this.selectedAnswer = null;
                 this.answeredQuestion = false;
             },
