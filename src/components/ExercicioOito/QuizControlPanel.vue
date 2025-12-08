@@ -86,7 +86,7 @@
                     "multiple",
                     "boolean"
                 ],
-                filterControls: FILTER_CONTROLS,
+                filterControls: { ...FILTER_CONTROLS },
                 categoriesOptions: [],
                 amountOptions: [5, 10],
                 chosenAmount: 5,

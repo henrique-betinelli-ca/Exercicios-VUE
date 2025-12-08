@@ -63,7 +63,7 @@
             playAgain() {
                 this.isPlayAgain = true;
 
-            this.currentComponent = 'GameScreem';
+                this.currentComponent = 'GameScreem';
             }
         }
     }
