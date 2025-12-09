@@ -8,7 +8,7 @@
                     :questionResults="questionResults"
                     :isPlayAgain="isPlayAgain"
                     :isFetchError="isFetchError"
-                    @past-quiz-control="receiveControlFilters"
+                    @quiz-control-past="receiveControlFilters"
                     @questions-fetch-failed="questionLoadFailed"
                     @game-ended="receiveResults"
                     @play-again-requested="playAgain"
@@ -21,20 +21,26 @@
 
 <script>
     import HomeScreen from "../../components/ExercicioOito/HomeScreen.vue";
-    import GameScreem from "../../components/ExercicioOito/GameScreem.vue";
+    import GameScreen from "../../components/ExercicioOito/GameScreen.vue";
     import ResultsScreen from "../../components/ExercicioOito/ResultsScreen.vue";
+
+    const SCREENS = {
+        HomeScreen: "HomeScreen",
+        GameScreen: "GameScreen",
+        ResultsScreen: "ResultsScreen",
+    };
 
     export default {
         name: "ExercicioOito",
         components: {
             HomeScreen,
-            GameScreem,
+            GameScreen,
             ResultsScreen,
         },
         data() {
             return {
                 filterControls: {},
-                currentComponent: "HomeScreen",
+                currentComponent: SCREENS.HomeScreen,
                 questionResults: [],
                 isPlayAgain: false,
                 isFetchError: false,
@@ -44,27 +50,33 @@
             receiveControlFilters(filters) {
                 this.filterControls = filters;
 
-                this.isPlayAgain = false;
-                this.isFetchError = false;
+                this.setIsPlayAgain(false);
+                this.setIsFetchError(false);
 
-                this.currentComponent = "GameScreem";
+                this.currentComponent = SCREENS.GameScreen;
             },
             questionLoadFailed() {
-                this.isFetchError = true;
+                this.setIsFetchError(true);
 
-                this.currentComponent = "HomeScreen";
+                this.currentComponent = SCREENS.HomeScreen;
             },
             receiveResults(results) {
                 this.questionResults = results;
-                this.isPlayAgain = false;
+                this.setIsPlayAgain(false);
                 
-                this.currentComponent = "ResultsScreen";
+                this.currentComponent = SCREENS.ResultsScreen;
             },
             playAgain() {
-                this.isPlayAgain = true;
+                this.setIsPlayAgain(true);
 
-                this.currentComponent = 'GameScreem';
-            }
+                this.currentComponent = SCREENS.GameScreen;
+            },
+            setIsPlayAgain(value) {
+                this.isPlayAgain = value;
+            },
+            setIsFetchError(value) {
+                this.isFetchError = value;
+            },
         }
     }
 </script>

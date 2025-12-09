@@ -51,7 +51,7 @@
             answersResult: {
                 handler(Result) {
                     if(Result){
-                        this.displayResult = true;
+                        this.setDisplayResult(true);
                         this.loadCard();
                     } 
                 }
@@ -59,7 +59,7 @@
         },
         methods: {
             closeResult() {
-                this.displayResult = false;
+                this.setDisplayResult(false);
 
                 this.$emit("displayed-result");
             },
@@ -83,6 +83,9 @@
                 }
 
                 this.cardResults.score = this.answersResult.score;
+            },
+            setDisplayResult(value) {
+                this.displayResult = value;
             }
         }
     }

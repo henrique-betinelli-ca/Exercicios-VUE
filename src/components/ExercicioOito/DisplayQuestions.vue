@@ -43,7 +43,7 @@
             }
         },
         mounted() {
-            this.isViewResults = false;
+            this.setViewResults(false);
         },
         props: {
             completedQuestions: {
@@ -52,9 +52,12 @@
         },
         methods: {
             viewResults() {
-                this.isViewResults = true;
+                this.setViewResults(true);
 
                 this.$emit("questions-for-display-requested");
+            },
+            setViewResults(value) {
+                this.isViewResults = value;
             }
         }
     }

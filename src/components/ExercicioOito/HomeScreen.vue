@@ -4,7 +4,7 @@
             <v-card class="w-75 pa-15">
                 <WelcomeMessage/>
                 <QuizControlPanel
-                    @past-quiz-control="ReceiveControlFilters"
+                    @quiz-control-past="ReceiveControlFilters"
                     :isFetchError="isFetchError"
                 />
             </v-card>
@@ -29,7 +29,7 @@
         },
         methods: {
             ReceiveControlFilters(filters) {
-                this.$emit("past-quiz-control", filters);
+                this.$emit("quiz-control-past", filters);
             }
         }
     }

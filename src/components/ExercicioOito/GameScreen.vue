@@ -12,7 +12,7 @@
                 <QuestionCards
                     v-if="questions.length > 0"
                     :currentQuestion="questions[questionIndex]"
-                    @question-answer="questionController"
+                    @question-answered="questionController"
                 />
             </v-card>
         </v-col>
@@ -23,7 +23,7 @@
     import QuestionCards from "../../components/ExercicioOito/QuestionCards.vue";
 
     export default {
-        name: "GameScreem",
+        name: "GameScreen",
         components: {
             QuestionCards,
         },
@@ -64,21 +64,13 @@
         },
         methods: {
             queryGenerator() {
-                this.url = `https://opentdb.com/api.php?amount=${this.questionFilters.amount}`;
+                const params = new URLSearchParams();
 
-                if(this.questionFilters.category) {
-                    this.url += `&category=${this.questionFilters.category}`;
-                }
+                Object.entries(this.questionFilters).forEach(([key, value]) => {
+                    if (value) params.append(key, value);
+                });
 
-                if(this.questionFilters.difficulty) {
-                    this.url += `&difficulty=${this.questionFilters.difficulty}`;
-                }
-
-                if(this.questionFilters.type) {
-                    this.url += `&type=${this.questionFilters.type}`;
-                }
-
-                return this.url;
+                return `https://opentdb.com/api.php?${params.toString()}`;
             },
             async getQuestions() {
                 await fetch(this.queryGenerator())
@@ -87,11 +79,9 @@
                 .catch(error => {
                     if(error) this.$emit("questions-fetch-failed");
                 })
-
             },
             questionController(answer) {
                 this.answers.push(answer);
-
 
                 if (this.questionIndex < this.questions.length - 1) {
                     this.questionIndex++;

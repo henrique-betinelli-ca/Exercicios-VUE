@@ -54,7 +54,7 @@
             startTimer: {
                 handler() {
                     this.resetTimer();
-                    this.timeBonusUsed = false;
+                    this.setTimeBonusUsed(false);
                     this.bonusTime = 0;
                     this.helpUsed = this.isBooleanQuestion;
                 }
@@ -73,7 +73,7 @@
                         const totalTimeAvailable = 30 + this.bonusTime;
                         const timeSpent = totalTimeAvailable - this.timeLeft;
 
-                        this.$emit("update-time", timeSpent);
+                        this.$emit("updated-time", timeSpent);
 
                     } else {
                         if(this.timeLeft > 0) {
@@ -106,12 +106,18 @@
             addTime() {
                 this.timeLeft += 10;
                 this.bonusTime = 10;
-                this.timeBonusUsed = true;
+                this.setTimeBonusUsed(true);
                 this.$emit("time-bonus-used")
             },
             requestFacilitator() {
-                this.helpUsed = true;
+                this.setHelpUsed(true);
                 this.$emit("requested-facilitator")
+            },
+            setHelpUsed(value) {
+                this.helpUsed = value;
+            },
+            setTimeBonusUsed(value) {
+                this.timeBonusUsed = value;
             }
         }
     }

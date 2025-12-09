@@ -8,7 +8,7 @@
                 @requested-facilitator="questionHelper"
                 @time-bonus-used="result.usedExtraTime = true"
                 @time-expired="timeExpired"
-                @update-time="result.timeSpent = $event"
+                @updated-time="result.timeSpent = $event"
             />
         </v-col>
         <v-col>
@@ -98,9 +98,9 @@
             selectedAnswer: {
                 handler(answer) {
                     if(answer) {
-                        this.answeredQuestion = true;
+                        this.setAnsweredQuestion(true);
                     } else {
-                        this.answeredQuestion = false;
+                        this.setAnsweredQuestion(false);
                     }
                 }
             }
@@ -124,7 +124,7 @@
 
                 this.timerKey++;   
 
-                this.$emit("question-answer", {...this.result});
+                this.$emit("question-answered", {...this.result});
                 
                 this.resetCard();
                 this.resetResults();
@@ -133,7 +133,7 @@
                 if(this.selectedAnswer) {
                     this.calculateResult();
 
-                    this.timerPaused = true;
+                    this.setTimerPaused(true);
 
                     this.answersResult = {...this.result};
                 }
@@ -142,9 +142,9 @@
                 this.answersResult = null;
 
                 this.timerKey++;   
-                this.timerPaused = false;
+                this.setTimerPaused(false);
 
-                this.$emit("question-answer", {...this.result});
+                this.$emit("question-answered", {...this.result});
 
                 this.resetCard();
                 this.resetResults();
@@ -168,12 +168,13 @@
 
             },
             resetResults() {
-                this.result = { ...RESULT }
+                this.result = { ...RESULT };
             },
             resetCard() {
-                this.questionData = { ...QUESTION_DATA }
+                this.questionData = { ...QUESTION_DATA };
+
                 this.selectedAnswer = null;
-                this.answeredQuestion = false;
+                this.setAnsweredQuestion(false);
             },
             questionHelper() {
                 const incorrectOptionsSeparator = this.currentQuestion.incorrect_answers.slice(0, 2);
@@ -185,9 +186,15 @@
             timeExpired() {
                 this.result.isTimeUp = true;
 
-                this.timerPaused = true;
+                this.setTimerPaused(true);
 
                 this.answersResult = {...this.result};
+            },
+            setAnsweredQuestion(value) {
+                this.answeredQuestion = value;
+            },
+            setTimerPaused(value) {
+                this.timerPaused = value;
             }
         }
     }
