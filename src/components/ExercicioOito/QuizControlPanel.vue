@@ -3,12 +3,7 @@
         <v-col>
             <QuizCategorySelect
                 @category-selected="filterControls.category = $event"
-                @category-data-fetch-failed="
-                feedbackAlert(
-                    'Failed to fetch categories.',
-                    'An error occurred while fetching the categories. To continue, the random mode has been selected.',
-                    'error'
-                )"
+                @category-data-fetch-failed="categoryDataFetchFailed"
             />
         </v-col>
 
@@ -45,17 +40,11 @@
 </template>
 
 <script>
+    import * as service from "../../services/ExercicioOito/Service.js";
     import QuizCategorySelect from "./ControlPanelSelects/QuizCategorySelect.vue";
     import QuizDifficultySelect from "./ControlPanelSelects/QuizDifficultySelect.vue";
     import QuizTypeSelect from "./ControlPanelSelects/QuizTypeSelect.vue";
     import QuizAmountSelect from "./ControlPanelSelects/QuizAmountSelect.vue";
-
-    const FILTER_CONTROLS = {
-        category: null,
-        difficulty: null,
-        type: null,
-        amount: 5,
-    }
 
     export default {
         name: "QuizControlPanel",
@@ -73,7 +62,7 @@
                     status: false,
                     type: "info"
                 },
-                filterControls: { ...FILTER_CONTROLS },
+                filterControls: service.getFilterControls(),
                 chosenDifficulty: null,
             }
         },
@@ -85,13 +74,21 @@
         watch: {
            isFetchError: {
             handler(isFetchError) {
-                if(isFetchError) this.feedbackAlert("Failed to fetch questions.", "An error occurred while fetching the questions. Please try again later.", "error");
+                if(isFetchError) this.feedbackAlert(service.getFeedbackAlertMesseges().ERROR_FETCHING_QUESTIONS);
             }
            } 
         },
         methods: {
-            feedbackAlert(title, message, type) {
-                this.alertReturn = {title, message, status: true, type};
+            categoryDataFetchFailed() {
+                this.feedbackAlert(service.getFeedbackAlertMesseges().ERROR_FETCHING_CATEGORIES);
+            },
+            feedbackAlert(alert) {
+                this.alertReturn = {
+                    title: alert.title,
+                    message: alert.message,
+                    type: alert.type,
+                    status: true
+                };
 
                 setTimeout(() => this.alertReturn.status = false, 10000);
             },

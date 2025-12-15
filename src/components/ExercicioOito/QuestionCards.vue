@@ -15,7 +15,7 @@
             <p>{{ questionData.question }}</p>
         </v-col>
         <v-col>
-            <v-radio-group v-model="selectedAnswer" v-if="questionData.allAnswers.length > 0">
+            <v-radio-group v-model="selectedAnswer" v-show="questionData.showAnswers.length > 0">
                 <template v-for="answers in questionData.showAnswers" :key="answers">
                     <v-radio :label="answers" :value="answers"></v-radio>
                 </template>
@@ -42,26 +42,9 @@
 </template>
 
 <script>
+    import * as service from "../../services/ExercicioOito/Service.js";
     import QuestionUtilities from "../../components/ExercicioOito/QuestionUtilities.vue";
     import QuestionResult from "../../components/ExercicioOito/QuestionResult.vue";
-
-    const RESULT = {
-        isCorrectAnswer: false,
-        question: null,
-        answer: null,
-        allAnswers: [],
-        helpWasUsed: false,
-        usedExtraTime: false,
-        isTimeUp: false,
-        score: 0,
-        timeSpent: 0,
-    };
-
-    const QUESTION_DATA = {
-        question: "",
-        allAnswers: [],
-        showAnswers: [],
-    };
 
     export default {
         name: "QuestionCards",
@@ -71,8 +54,8 @@
         },
         data() {
             return {
-                questionData: { ...QUESTION_DATA },
-                result: { ...RESULT },
+                questionData: {...service.getQuestionData()},
+                result: {...service.getResult()},
                 answersResult: null,
                 timerKey: 0,
                 timerPaused: false,
@@ -89,10 +72,7 @@
             currentQuestion: {
                 immediate: true,
                 handler() {
-                    this.questionData.question = this.currentQuestion.question;
-                    this.result.question = this.currentQuestion.question;
-                    this.answerShuffler();
-                    this.timerKey++;   
+                    this.processingNewQuestion()
                 }
             },
             selectedAnswer: {
@@ -106,16 +86,14 @@
             }
         },
         methods: {
-            answerShuffler() {
-                this.questionData.allAnswers = [
-                    this.currentQuestion.correct_answer,
-                    ...this.currentQuestion.incorrect_answers,
-                ];
+            processingNewQuestion() {
+                this.questionData.question = this.currentQuestion.question;
+                this.result.question = this.currentQuestion.question;
+                this.timerKey++;  
 
-                const shuffledQuestions = this.questionData.allAnswers.sort(() => Math.random() - 0.5);
-                
-                this.questionData.showAnswers = shuffledQuestions;
-                this.result.allAnswers = shuffledQuestions;
+                const shuffledQuestions = service.answerShuffler(this.currentQuestion.correct_answer, this.currentQuestion.incorrect_answers);
+                this.questionData.showAnswers = shuffledQuestions
+                this.result.allAnswers = shuffledQuestions
             },
             skipQuestion() {
                 this.result.isCorrectAnswer = false;
@@ -131,7 +109,10 @@
             },
             sendQuestion() {
                 if(this.selectedAnswer) {
-                    this.calculateResult();
+                    const calculationResult = service.calculateResult(this.selectedAnswer, this.currentQuestion.correct_answer, this.result.helpWasUsed, this.result.usedExtraTime);
+                    this.result.score = calculationResult;
+                    this.result.isCorrectAnswer = !!calculationResult;
+                    this.result.answer = this.selectedAnswer;
 
                     this.setTimerPaused(true);
 
@@ -149,37 +130,17 @@
                 this.resetCard();
                 this.resetResults();
             },
-            calculateResult() {
-                if(this.selectedAnswer == this.currentQuestion.correct_answer) {
-                    this.result.isCorrectAnswer = true;
-                    
-                    if(this.result.helpWasUsed || this.result.usedExtraTime) {
-                        this.result.score = 5;
-                    } else {
-                        this.result.score = 10;
-                    }
-
-                } else {
-                    this.result.isCorrectAnswer = false;
-                    this.result.score = 0;
-                }
-
-                this.result.answer = this.selectedAnswer;
-
-            },
             resetResults() {
-                this.result = { ...RESULT };
+                this.result = {...service.getResult()};
             },
             resetCard() {
-                this.questionData = { ...QUESTION_DATA };
+                this.questionData = {...service.getQuestionData()};
 
                 this.selectedAnswer = null;
                 this.setAnsweredQuestion(false);
             },
             questionHelper() {
-                const incorrectOptionsSeparator = this.currentQuestion.incorrect_answers.slice(0, 2);
-
-                this.questionData.showAnswers = this.questionData.showAnswers.filter(options => !incorrectOptionsSeparator.includes(options));
+                this.questionData.showAnswers = service.wrongAnswersRemover(this.questionData.showAnswers, this.currentQuestion.incorrect_answers);
             
                 this.result.helpWasUsed = true;
             },

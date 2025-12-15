@@ -19,6 +19,7 @@
 </template>
 
 <script>
+    import * as service from "../../services/ExercicioOito/Service.js";
     import ScoreResult from "../../components/ExercicioOito/ScoreResult.vue";
     import FinalSteps from "../../components/ExercicioOito/FinalSteps.vue";
     import DisplayQuestions from "../../components/ExercicioOito/DisplayQuestions.vue";
@@ -32,10 +33,7 @@
         },
         data() {
             return {
-                totalResults: {
-                    score: 0,
-                    time: 0,
-                },
+                totalResults: {...service.getTotalResults()},
                 completedQuestions: [],
             }
         },
@@ -50,17 +48,17 @@
         watch: {
             questionResults: {
                 handler() {
-                    this.calculateFinalScore();
+                    this.calculateFinalResults();
                 },
                 deep: true,
                 immediate: true
             }
         },
         methods: {
-            calculateFinalScore() {
-                this.totalResults.score = this.questionResults.reduce((sum, result) => sum + result.score, 0);
+            calculateFinalResults() {
+                this.totalResults.score = service.calculateScore(this.questionResults);
 
-                this.totalResults.time = this.questionResults.reduce((sum, result) => sum + result.timeSpent, 0);
+                this.totalResults.time = service.calculateTime(this.questionResults);
             },
             prepareQuestionsForDisplay() {
                 this.completedQuestions = this.questionResults.map(question => ({

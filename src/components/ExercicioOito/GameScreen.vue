@@ -20,6 +20,7 @@
 </template>
 
 <script>
+    import * as service from "../../services/ExercicioOito/Service.js";
     import QuestionCards from "../../components/ExercicioOito/QuestionCards.vue";
 
     export default {
@@ -63,17 +64,8 @@
             }
         },
         methods: {
-            queryGenerator() {
-                const params = new URLSearchParams();
-
-                Object.entries(this.questionFilters).forEach(([key, value]) => {
-                    if (value) params.append(key, value);
-                });
-
-                return `https://opentdb.com/api.php?${params.toString()}`;
-            },
             async getQuestions() {
-                await fetch(this.queryGenerator())
+                await fetch(service.queryGenerator(this.questionFilters))
                 .then(resp => resp.json())
                 .then(data => this.questions = data.results || [])
                 .catch(error => {

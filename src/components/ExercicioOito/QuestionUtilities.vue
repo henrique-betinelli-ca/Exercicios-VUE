@@ -24,6 +24,7 @@
 </template>
 
 <script>
+    import * as service from "../../services/ExercicioOito/Service.js";
 
     export default {
         name: "QuestionUtilities",
@@ -70,10 +71,7 @@
                     if (isPaused) {
                         clearInterval(this.interval);
 
-                        const totalTimeAvailable = 30 + this.bonusTime;
-                        const timeSpent = totalTimeAvailable - this.timeLeft;
-
-                        this.$emit("updated-time", timeSpent);
+                        this.$emit("updated-time", service.timeSpentCalculator(this.bonusTime, this.timeLeft));
 
                     } else {
                         if(this.timeLeft > 0) {

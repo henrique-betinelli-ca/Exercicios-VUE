@@ -1,6 +1,6 @@
 <template>
     <v-select
-        @update:menu="getCategories"
+        @update:menu="takeCategories"
         @update:modelValue="$emit('category-selected', $event)"
         label="category"
         item-title="name"
@@ -17,6 +17,8 @@
 </template>
 
 <script>
+    import * as service from "../../../services/ExercicioOito/Service.js";
+
     export default {
         name: "QuizCategorySelect",
         data() {
@@ -26,14 +28,11 @@
             }
         },
         methods: {
-            async getCategories() {
+            async takeCategories() {
                 try {
-                    const resp = await fetch("https://opentdb.com/api_category.php");
-                    const data = await resp.json();
-                    
-                    this.categoriesOptions = data.trivia_categories;
+                    this.categoriesOptions = await service.getCategories();
                 } catch {
-                    this.$emit("category-data-fetch-failed")
+                    this.$emit("category-data-fetch-failed");
                 }
             }
         }

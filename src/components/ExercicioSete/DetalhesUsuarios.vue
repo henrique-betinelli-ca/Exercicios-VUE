@@ -16,19 +16,19 @@
 </template>
 
 <script>
-import DetalhesUsuariosCabecalho from './DetalhesUsuarioCabecalho.vue'
-import DetalhesUsuarioCorpo from './DetalhesUsuarioCorpo.vue'
+    import DetalhesUsuariosCabecalho from './DetalhesUsuarioCabecalho.vue'
+    import DetalhesUsuarioCorpo from './DetalhesUsuarioCorpo.vue'
 
-export default {
-    name: 'DetalhesUsuarios',
-    components: {
-        DetalhesUsuariosCabecalho,
-        DetalhesUsuarioCorpo
-    },
-    props: {
-        dadosParaExibicaoDeUsuario: {
-            type: Object
+    export default {
+        name: 'DetalhesUsuarios',
+        components: {
+            DetalhesUsuariosCabecalho,
+            DetalhesUsuarioCorpo
         },
-    },
-}
+        props: {
+            dadosParaExibicaoDeUsuario: {
+                type: Object
+            },
+        },
+    }
 </script>

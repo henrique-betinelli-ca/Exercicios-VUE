@@ -28,18 +28,14 @@
 </template>
 
 <script>
+    import * as service from "../../services/ExercicioOito/Service.js";
 
     export default {
         name: "QuestionResult",
         data() {
             return {
                 displayResult: false,
-                cardResults: {
-                    icon: "",
-                    title: "",
-                    message: "",
-                    score: null,
-                }
+                cardResults: null,
             }
         },
         props: {
@@ -64,25 +60,7 @@
                 this.$emit("displayed-result");
             },
             loadCard() {
-                if(this.answersResult.isTimeUp) {
-                    this.cardResults.icon = "mdi-close-circle";
-                    this.cardResults.title = "Time Expired";
-                    this.cardResults.message = "Unfortunately, the time limit has been reached.";
-
-                } else {
-                    if(this.answersResult.isCorrectAnswer) {
-                        this.cardResults.icon = "mdi-check-circle";
-                        this.cardResults.title = "Correct";
-                        this.cardResults.message = "Congratulations! You got it right!";
-
-                    } else {
-                        this.cardResults.icon = "mdi-close-circle";
-                        this.cardResults.title = "Incorrect";
-                        this.cardResults.message = "You almost got it!";
-                    }
-                }
-
-                this.cardResults.score = this.answersResult.score;
+                this.cardResults = {...service.buildResultCard(this.answersResult.isTimeUp, this.answersResult.isCorrectAnswer, this.answersResult.score)};
             },
             setDisplayResult(value) {
                 this.displayResult = value;

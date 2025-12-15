@@ -4,7 +4,7 @@
             <v-text-field
                 v-model="filtroNome"
                 label="Pesquisar"
-                :error-messages="mensagemErro" 
+                :error-messages="mensagemDeRetorno" 
                 @input="campoDeTexto"
             >
                 <template #append-inner>
@@ -36,52 +36,53 @@
 </template>
 
 <script>
+    import * as service from "../../services/ExercicioSete/Service.js"
 
-export default {
-    name: 'FiltrosParaPesquisa',
-    data() {
-        return{
-            filtroGenero: "",
-            filtroNome: "",
-            mensagemErro: "",
-            buscandoPorNome: false,
-        }
-    }, 
-
-    methods: {
-        setarMensagemDeErro(valor) {
-            this.mensagemErro = valor;
-        },
-
-        passarFiltroNome(){
-            if (this.filtroNome.trim() === "") {
-                this.setarMensagemDeErro("Preencha este campo primeiro!")
-                return
+    export default {
+        name: 'FiltrosParaPesquisa',
+        data() {
+            return{
+                filtroGenero: "",
+                filtroNome: "",
+                mensagemDeRetorno: "",
+                buscandoPorNome: false,
             }
+        }, 
 
-            this.mensagemErro = ""
-            this.buscandoPorNome = true
-            this.$emit('nome-para-busca-preenchido', this.filtroNome)
+        methods: {
+            setarMensagemDeRetorno(valor) {
+                this.mensagemDeRetorno = valor;
+            },
 
-        },
-        
-        campoDeTexto(){
-            if (this.filtroNome.trim() != "") {
-                this.setarMensagemDeErro("")
-            } else {
-                this.buscandoPorNome = false
-                this.$emit('nome-para-busca-cancelado')
+            passarFiltroNome(){
+                if (this.filtroNome.trim() === "") {
+                    this.setarMensagemDeRetorno(service.pegarMensagensDeRetorno().preencherCampo)
+                    return
+                }
+
+                this.setarMensagemDeRetorno(service.pegarMensagensDeRetorno().limpo)
+                this.buscandoPorNome = true
+                this.$emit('nome-para-busca-preenchido', this.filtroNome)
+
+            },
+            
+            campoDeTexto(){
+                if (this.filtroNome.trim() != "") {
+                    this.setarMensagemDeRetorno(service.pegarMensagensDeRetorno().limpo)
+                } else {
+                    this.buscandoPorNome = false
+                    this.$emit('nome-para-busca-cancelado')
+                }
             }
-        }
-    },
-    watch: {
-        filtroGenero: {
-            handler(genero){
-                if(genero != ""){
-                    this.$emit('genero-para-busca-adicionado', this.filtroGenero)
+        },
+        watch: {
+            filtroGenero: {
+                handler(genero){
+                    if(genero != ""){
+                        this.$emit('genero-para-busca-adicionado', this.filtroGenero)
+                    }
                 }
             }
         }
     }
-}
 </script>

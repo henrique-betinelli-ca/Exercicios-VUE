@@ -20,15 +20,10 @@
 </template>
 
 <script>
+    import * as service from "../../services/ExercicioOito/Service.js";
     import HomeScreen from "../../components/ExercicioOito/HomeScreen.vue";
     import GameScreen from "../../components/ExercicioOito/GameScreen.vue";
     import ResultsScreen from "../../components/ExercicioOito/ResultsScreen.vue";
-
-    const SCREENS = {
-        HomeScreen: "HomeScreen",
-        GameScreen: "GameScreen",
-        ResultsScreen: "ResultsScreen",
-    };
 
     export default {
         name: "ExercicioOito",
@@ -40,7 +35,7 @@
         data() {
             return {
                 filterControls: {},
-                currentComponent: SCREENS.HomeScreen,
+                currentComponent: service.getScreens().HomeScreen,
                 questionResults: [],
                 isPlayAgain: false,
                 isFetchError: false,
@@ -53,23 +48,23 @@
                 this.setIsPlayAgain(false);
                 this.setIsFetchError(false);
 
-                this.currentComponent = SCREENS.GameScreen;
+                this.currentComponent = service.getScreens().GameScreen;
             },
             questionLoadFailed() {
                 this.setIsFetchError(true);
 
-                this.currentComponent = SCREENS.HomeScreen;
+                this.currentComponent = service.getScreens().HomeScreen;
             },
             receiveResults(results) {
                 this.questionResults = results;
                 this.setIsPlayAgain(false);
                 
-                this.currentComponent = SCREENS.ResultsScreen;
+                this.currentComponent = service.getScreens().ResultsScreen;
             },
             playAgain() {
                 this.setIsPlayAgain(true);
 
-                this.currentComponent = SCREENS.GameScreen;
+                this.currentComponent = service.getScreens().GameScreen;
             },
             setIsPlayAgain(value) {
                 this.isPlayAgain = value;
