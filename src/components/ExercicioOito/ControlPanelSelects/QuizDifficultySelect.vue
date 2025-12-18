@@ -9,15 +9,13 @@
 </template>
 
 <script>
+    import * as service from "../../../services/ExercicioOito/Service.js";
+
     export default {
         name: "QuizDifficultySelect",
         data() {
             return {
-                difficultyOptions: [
-                    "easy",
-                    "medium",
-                    "hard"
-                ],
+                difficultyOptions: service.getDifficultyOptions(),
                 chosenDifficulty: null,
             }
         },

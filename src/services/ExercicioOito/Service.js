@@ -1,23 +1,20 @@
 export { getCategories, queryGenerator } from "./Resource.js";
-import { FEEDBACK_ALERT_MESSAGES, FILTER_CONTROLS, SCREENS, RESULT, QUESTION_DATA, CARD_RESULTS_CONTENTS, TOTAL_RESULTS } from "./Constants.js";
+import { FEEDBACK_ALERT_MESSAGES, SCREENS, CARD_RESULTS_CONTENTS, AMOUNT_OPTIONS, DIFFICULTY_OPTIONS, TYPE_OPTIONS } from "./Constants.js";
 
 export function getFeedbackAlertMesseges() {
     return FEEDBACK_ALERT_MESSAGES;
 }
-export function getFilterControls() {
-    return FILTER_CONTROLS
-}
 export function getScreens() {
     return SCREENS;
 }
-export function getResult() {
-    return RESULT;
+export function getAmountOptions() {
+    return AMOUNT_OPTIONS;
 }
-export function getQuestionData() {
-    return QUESTION_DATA;
+export function getDifficultyOptions() {
+    return DIFFICULTY_OPTIONS;
 }
-export function getTotalResults() {
-    return TOTAL_RESULTS;
+export function getTypeOptions() {
+    return TYPE_OPTIONS;
 }
 
 export function answerShuffler(correctAnswer, incorrectAnswers) {
@@ -30,7 +27,7 @@ export function answerShuffler(correctAnswer, incorrectAnswers) {
             
     return shuffledQuestions;
 }
-export function calculateResult(selectedAnswer, correctAnswer, helpWasUsed, usedExtraTime) {
+export function calculateResult({selectedAnswer, correctAnswer, helpWasUsed, usedExtraTime}) {
     let score = 0
     if (selectedAnswer === correctAnswer) {
         if (helpWasUsed || usedExtraTime) {
@@ -47,7 +44,7 @@ export function wrongAnswersRemover(answers, incorrectAnswers) {
 function selectAnswersToRemove(incorrectAnswers) {
     return incorrectAnswers.slice(0, 2);
 }
-export function buildResultCard(isTimeUp, isCorrectAnswer, score) {
+export function buildResultCard(isTimeUp, isCorrectAnswer) {
     let cardResult = {...CARD_RESULTS_CONTENTS.WRONG_ANSWER};
 
     if(isTimeUp) {
@@ -57,7 +54,6 @@ export function buildResultCard(isTimeUp, isCorrectAnswer, score) {
             cardResult = {...CARD_RESULTS_CONTENTS.CORRECT_ANSWER};
         }
     }
-    cardResult.score = score;
     return cardResult;
 }
 export function timeSpentCalculator(bonusTime, timeLeft) {

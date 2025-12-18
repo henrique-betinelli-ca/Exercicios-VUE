@@ -35,7 +35,7 @@
 
             formatarGenero() {
                 return (genero) => {
-                    return genero === 'male' ? service.pegarGeneros().masculino : service.pegarGeneros().feminino
+                    return genero === service.pegarGeneros().MALE ? service.pegarGeneros().MASCULINO : service.pegarGeneros().FEMININO
                 }
             }
         }

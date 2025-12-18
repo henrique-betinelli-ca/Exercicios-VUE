@@ -1,63 +1,47 @@
 export const FEEDBACK_ALERT_MESSAGES = {
     ERROR_FETCHING_CATEGORIES: {
-        title: "Failed to fetch categories.",
-        message: "An error occurred while fetching the categories. To continue, the random mode has been selected.",
-        type: "error",
+        TITLE: "Failed to fetch categories.",
+        MESSAGE: "An error occurred while fetching the categories. To continue, the random mode has been selected.",
+        TYPE: "error",
     },
     ERROR_FETCHING_QUESTIONS: {
-        title: "Failed to fetch questions.",
-        message: "An error occurred while fetching the questions. Please try again later.",
-        type: "error",
+        TITLE: "Failed to fetch questions.",
+        MESSAGE: "An error occurred while fetching the questions. Please try again later.",
+        TYPE: "error",
     }
 }
-export const FILTER_CONTROLS = {
-    category: null,
-    difficulty: null,
-    type: null,
-    amount: 5,
-}
 export const SCREENS = {
-    HomeScreen: "HomeScreen",
-    GameScreen: "GameScreen",
-    ResultsScreen: "ResultsScreen",
-}
-export const RESULT = {
-    isCorrectAnswer: false,
-    question: null,
-    answer: null,
-    allAnswers: [],
-    helpWasUsed: false,
-    usedExtraTime: false,
-    isTimeUp: false,
-    score: 0,
-    timeSpent: 0,
-}
-export const QUESTION_DATA = {
-    question: "",
-    allAnswers: [],
-    showAnswers: [],
+    HOME_SCREEN: "HomeScreen",
+    GAME_SCREEN: "GameScreen",
+    RESULTS_SCREEN: "ResultsScreen",
 }
 export const CARD_RESULTS_CONTENTS = {
     TIME_UP: {
-        icon: "mdi-close-circle",
-        title: "Time Expired",
-        message: "Unfortunately, the time limit has been reached.",
-        score: null,
+        ICON: "mdi-close-circle",
+        TITLE: "Time Expired",
+        MESSAGE: "Unfortunately, the time limit has been reached.",
     },
     CORRECT_ANSWER: {
-        icon: "mdi-check-circle",
-        title: "Correct",
-        message: "Congratulations! You got it right!",
-        score: null,
+        ICON: "mdi-check-circle",
+        TITLE: "Correct",
+        MESSAGE: "Congratulations! You got it right!",
     },
     WRONG_ANSWER: {
-        icon: "mdi-close-circle",
-        title: "Incorrect",
-        message: "You almost got it!",
-        score: null,
+        ICON: "mdi-close-circle",
+        TITLE: "Incorrect",
+        MESSAGE: "You almost got it!",
     }
 }
-export const TOTAL_RESULTS = {
-    score: 0,
-    time: 0,
-}
+export const AMOUNT_OPTIONS = [
+    5,
+    10,
+]
+export const DIFFICULTY_OPTIONS = [
+    "easy",
+    "medium",
+    "hard",
+]
+export const TYPE_OPTIONS = [
+    "multiple",
+    "boolean",
+]

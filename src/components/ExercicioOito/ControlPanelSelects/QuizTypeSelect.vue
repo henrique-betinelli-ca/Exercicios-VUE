@@ -9,14 +9,13 @@
 </template>
 
 <script>
+    import * as service from "../../../services/ExercicioOito/Service.js";
+
     export default {
         name: "QuizTypeSelect",
         data() {
             return {
-                typeOptions: [
-                    "multiple",
-                    "boolean"
-                ],
+                typeOptions: service.getTypeOptions(),
                 chosenType: null,
             }
         },

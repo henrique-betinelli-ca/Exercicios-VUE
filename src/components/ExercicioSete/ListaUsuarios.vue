@@ -20,7 +20,7 @@
 
             <template #append>
                 <v-btn
-                    :icon="usuarioSelecionado === usuario ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                    :icon="usuarioSelecionado === usuario ? iconeVisualizacaoUsuario.visualizando : iconeVisualizacaoUsuario.fechado"
                     variant="text"
                     class="ml-4"
                     @click="verDetalheDoUsario(usuario)"
@@ -68,6 +68,7 @@
                 usuarioSelecionado: null,
                 mensagemDeRetorno: '',
                 carregandoUsuarios: false,
+                iconeVisualizacaoUsuario: service.pegarIconeVisualizacaoUsuario()
             }
         },
         mounted() {

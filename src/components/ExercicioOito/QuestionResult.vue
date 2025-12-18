@@ -35,7 +35,12 @@
         data() {
             return {
                 displayResult: false,
-                cardResults: null,
+                cardResults: {
+                    icon: "",
+                    title: "",
+                    message: "",
+                    score: null,
+                },
             }
         },
         props: {
@@ -47,8 +52,8 @@
             answersResult: {
                 handler(Result) {
                     if(Result){
+                        this.loadCard(service.buildResultCard(this.answersResult.isTimeUp, this.answersResult.isCorrectAnswer));
                         this.setDisplayResult(true);
-                        this.loadCard();
                     } 
                 }
             }
@@ -59,8 +64,13 @@
 
                 this.$emit("displayed-result");
             },
-            loadCard() {
-                this.cardResults = {...service.buildResultCard(this.answersResult.isTimeUp, this.answersResult.isCorrectAnswer, this.answersResult.score)};
+            loadCard(cardData) {
+                this.cardResults = {
+                    icon: cardData.ICON,
+                    title: cardData.TITLE,
+                    message: cardData.MESSAGE,
+                    score: this.answersResult.score,
+                };
             },
             setDisplayResult(value) {
                 this.displayResult = value;

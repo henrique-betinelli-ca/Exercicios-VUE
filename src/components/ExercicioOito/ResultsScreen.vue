@@ -33,7 +33,10 @@
         },
         data() {
             return {
-                totalResults: {...service.getTotalResults()},
+                totalResults: {
+                    score: 0,
+                    time: 0,
+                },
                 completedQuestions: [],
             }
         },

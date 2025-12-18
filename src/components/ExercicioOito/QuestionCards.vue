@@ -3,7 +3,7 @@
         <v-col>
             <QuestionUtilities
                 :startTimer="timerKey"
-                :isBooleanQuestion="currentQuestion.type === 'boolean'"
+                :isBooleanQuestion="isBooleanQuestion"
                 :pausedTime="timerPaused"
                 @requested-facilitator="questionHelper"
                 @time-bonus-used="result.usedExtraTime = true"
@@ -46,6 +46,23 @@
     import QuestionUtilities from "../../components/ExercicioOito/QuestionUtilities.vue";
     import QuestionResult from "../../components/ExercicioOito/QuestionResult.vue";
 
+    const INITIAL_RESULT = {
+        isCorrectAnswer: false,
+        question: null,
+        answer: null,
+        allAnswers: [],
+        helpWasUsed: false,
+        usedExtraTime: false,
+        isTimeUp: false,
+        score: 0,
+        timeSpent: 0,
+    }
+    const INITIAL_QUENTION_DATA = {
+        question: "",
+        allAnswers: [],
+        showAnswers: [],
+    }
+    
     export default {
         name: "QuestionCards",
         components: {
@@ -54,9 +71,10 @@
         },
         data() {
             return {
-                questionData: {...service.getQuestionData()},
-                result: {...service.getResult()},
+                questionData: {...INITIAL_QUENTION_DATA},
+                result: {...INITIAL_RESULT},
                 answersResult: null,
+                isBooleanQuestion: null,
                 timerKey: 0,
                 timerPaused: false,
                 selectedAnswer: null,
@@ -94,6 +112,8 @@
                 const shuffledQuestions = service.answerShuffler(this.currentQuestion.correct_answer, this.currentQuestion.incorrect_answers);
                 this.questionData.showAnswers = shuffledQuestions
                 this.result.allAnswers = shuffledQuestions
+
+                this.isBooleanQuestion = this.currentQuestion.type === "boolean" 
             },
             skipQuestion() {
                 this.result.isCorrectAnswer = false;
@@ -109,7 +129,12 @@
             },
             sendQuestion() {
                 if(this.selectedAnswer) {
-                    const calculationResult = service.calculateResult(this.selectedAnswer, this.currentQuestion.correct_answer, this.result.helpWasUsed, this.result.usedExtraTime);
+                    const calculationResult = service.calculateResult({
+                        selectedAnswer: this.selectedAnswer, 
+                        correctAnswer: this.currentQuestion.correct_answer,
+                        helpWasUsed: this.result.helpWasUsed,
+                        usedExtraTime: this.result.usedExtraTime
+                    });
                     this.result.score = calculationResult;
                     this.result.isCorrectAnswer = !!calculationResult;
                     this.result.answer = this.selectedAnswer;
@@ -131,10 +156,10 @@
                 this.resetResults();
             },
             resetResults() {
-                this.result = {...service.getResult()};
+                this.result = {...INITIAL_RESULT};
             },
             resetCard() {
-                this.questionData = {...service.getQuestionData()};
+                this.questionData = {...INITIAL_QUENTION_DATA};
 
                 this.selectedAnswer = null;
                 this.setAnsweredQuestion(false);

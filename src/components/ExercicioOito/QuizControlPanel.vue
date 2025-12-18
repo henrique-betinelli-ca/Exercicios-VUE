@@ -57,12 +57,17 @@
         data() {
             return {
                 alertReturn: {
-                    title: "",
-                    message: "",
+                    title: null,
+                    message: null,
                     status: false,
                     type: "info"
                 },
-                filterControls: service.getFilterControls(),
+                filterControls: {
+                    category: null,
+                    difficulty: null,
+                    type: null,
+                    amount: service.getAmountOptions()[0],
+                },
                 chosenDifficulty: null,
             }
         },
@@ -82,11 +87,11 @@
             categoryDataFetchFailed() {
                 this.feedbackAlert(service.getFeedbackAlertMesseges().ERROR_FETCHING_CATEGORIES);
             },
-            feedbackAlert(alert) {
+            feedbackAlert(alertData) {
                 this.alertReturn = {
-                    title: alert.title,
-                    message: alert.message,
-                    type: alert.type,
+                    title: alertData.TITLE,
+                    message: alertData.MESSAGE,
+                    type: alertData.TYPE,
                     status: true
                 };
 

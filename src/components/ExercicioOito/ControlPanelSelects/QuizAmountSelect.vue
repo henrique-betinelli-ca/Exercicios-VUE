@@ -9,11 +9,13 @@
 </template>
 
 <script>
+    import * as service from "../../../services/ExercicioOito/Service.js";
+
     export default {
         name: "QuizAmountSelect",
         data() {
             return {
-                amountOptions: [5, 10],
+                amountOptions: service.getAmountOptions(),
                 chosenAmount: 5,
             }
         },

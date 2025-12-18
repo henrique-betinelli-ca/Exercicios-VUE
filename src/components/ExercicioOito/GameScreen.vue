@@ -30,7 +30,6 @@
         },
         data() {
             return {
-                url: "https://opentdb.com/api.php?",
                 questions: [],
                 questionIndex: 0,
                 answers: [],

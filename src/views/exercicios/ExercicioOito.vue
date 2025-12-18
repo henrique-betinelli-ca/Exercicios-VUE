@@ -12,7 +12,7 @@
                     @questions-fetch-failed="questionLoadFailed"
                     @game-ended="receiveResults"
                     @play-again-requested="playAgain"
-                    @back-home-requested="currentComponent = 'HomeScreen'"
+                    @back-home-requested="backHome"
                 />
             </v-col>
         </v-row>
@@ -35,7 +35,7 @@
         data() {
             return {
                 filterControls: {},
-                currentComponent: service.getScreens().HomeScreen,
+                currentComponent: service.getScreens().HOME_SCREEN,
                 questionResults: [],
                 isPlayAgain: false,
                 isFetchError: false,
@@ -48,23 +48,29 @@
                 this.setIsPlayAgain(false);
                 this.setIsFetchError(false);
 
-                this.currentComponent = service.getScreens().GameScreen;
+                this.setCurrentComponent(service.getScreens().GAME_SCREEN);
             },
             questionLoadFailed() {
                 this.setIsFetchError(true);
 
-                this.currentComponent = service.getScreens().HomeScreen;
+                this.setCurrentComponent(service.getScreens().HOME_SCREEN);
             },
             receiveResults(results) {
                 this.questionResults = results;
                 this.setIsPlayAgain(false);
                 
-                this.currentComponent = service.getScreens().ResultsScreen;
+                this.setCurrentComponent(service.getScreens().RESULTS_SCREEN);
             },
             playAgain() {
                 this.setIsPlayAgain(true);
 
-                this.currentComponent = service.getScreens().GameScreen;
+                this.setCurrentComponent(service.getScreens().GAME_SCREEN);
+            },
+            backHome() {
+                this.setCurrentComponent(service.getScreens().HOME_SCREEN);
+            },
+            setCurrentComponent(value) {
+                this.currentComponent = value;
             },
             setIsPlayAgain(value) {
                 this.isPlayAgain = value;

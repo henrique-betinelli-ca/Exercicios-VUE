@@ -1,11 +1,17 @@
 import  { buscarUsuarios }  from "./Resource.js";
-import { MENSAGENS_DE_RETORNO, GENEROS } from "./Constants.js";
+import { MENSAGENS_DE_RETORNO, GENEROS, ICONE_VISUALIZACAO_USUARIO, NUMERO_DE_EXEBICOES } from "./Constants.js";
 
 export function pegarMensagensDeRetorno() {
     return MENSAGENS_DE_RETORNO;
 }
 export function pegarGeneros() {
     return GENEROS;
+}
+export function pegarIconeVisualizacaoUsuario() {
+    return ICONE_VISUALIZACAO_USUARIO;
+}
+export function pegarNumeroDeExebicoes() {
+    return NUMERO_DE_EXEBICOES;
 }
 
 export async function manipularUsuariosDaPagina(nomeParaBusca, generoParaBusca, paginaAtual, numeroDeUsuariosPorPagina) {    

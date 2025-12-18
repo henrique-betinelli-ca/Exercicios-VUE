@@ -19,12 +19,13 @@
 </template>
 
 <script>
+    import * as service from "../../services/ExercicioSete/Service.js"
 
     export default{
         name: 'OrganizadorDePagina',
         data() {
             return {
-                numeroDeExebicoes: [6, 12, 24],
+                numeroDeExebicoes: service.pegarNumeroDeExebicoes(),
                 numeroDeExebicaoPorPagina: 12,
                 paginaAtual: 1,
             }

@@ -1,11 +1,19 @@
 export const MENSAGENS_DE_RETORNO = {
-    limpo: "",
-    carregamento: "Carregando...",
-    usuarioNaoEncotrado: "Nenhum usuário com esse nome encontrado!",
-    falhaAoCarregarUsuarios: "Ops, estamos com problema ao carregar os usuários. Tente novamente mais tarde!",
-    preencherCampo: "Preencha este campo primeiro!",
+    LIMPO: "",
+    CARREGANDO: "Carregando...",
+    USUARIO_NAO_ENCONTRADO: "Nenhum usuário com esse nome encontrado!",
+    FALHA_AO_CARREGAR_USUARIO: "Ops, estamos com problema ao carregar os usuários. Tente novamente mais tarde!",
+    PREENCHER_CAMPO: "Preencha este campo primeiro!",
 }
 export const GENEROS = {
-    masculino: "Masculino",
-    feminino: "Feminino",
+    MASCULINO: "Masculino",
+    FEMININO: "Feminino",
+    MALE: "male",
 }
+export const ICONE_VISUALIZACAO_USUARIO = {
+    visualizando: "mdi-chevron-up",
+    fechado: "mdi-chevron-down",
+}
+export const NUMERO_DE_EXEBICOES = [
+    6, 12, 24
+]
