@@ -1,5 +1,5 @@
 export { getCategories, queryGenerator } from "./Resource.js";
-import { FEEDBACK_ALERT_MESSAGES, SCREENS, CARD_RESULTS_CONTENTS, AMOUNT_OPTIONS, DIFFICULTY_OPTIONS, TYPE_OPTIONS } from "./Constants.js";
+import { FEEDBACK_ALERT_MESSAGES, SCREENS, CARD_RESULTS_CONTENTS, AMOUNT_OPTIONS, DIFFICULTY_OPTIONS, TYPE_OPTIONS, RESULT, QUENTION_DATA } from "./Constants.js";
 
 export function getFeedbackAlertMesseges() {
     return FEEDBACK_ALERT_MESSAGES;
@@ -15,6 +15,12 @@ export function getDifficultyOptions() {
 }
 export function getTypeOptions() {
     return TYPE_OPTIONS;
+}
+export function getResult() {
+    return RESULT;
+}
+export function getQustionData() {
+    return QUENTION_DATA;
 }
 
 export function answerShuffler(correctAnswer, incorrectAnswers) {

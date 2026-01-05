@@ -32,6 +32,23 @@ export const CARD_RESULTS_CONTENTS = {
         MESSAGE: "You almost got it!",
     }
 }
+export const RESULT = {
+    isCorrectAnswer: false,
+    question: null,
+    answer: null,
+    allAnswers: [],
+    helpWasUsed: false,
+    usedExtraTime: false,
+    isTimeUp: false,
+    score: 0,
+    timeSpent: 0,
+}
+    
+export const QUENTION_DATA = {
+    question: "",
+    allAnswers: [],
+    showAnswers: [],
+}
 export const AMOUNT_OPTIONS = [
     5,
     10,

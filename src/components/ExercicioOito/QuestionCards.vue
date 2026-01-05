@@ -45,23 +45,6 @@
     import * as service from "../../services/ExercicioOito/Service.js";
     import QuestionUtilities from "../../components/ExercicioOito/QuestionUtilities.vue";
     import QuestionResult from "../../components/ExercicioOito/QuestionResult.vue";
-
-    const INITIAL_RESULT = {
-        isCorrectAnswer: false,
-        question: null,
-        answer: null,
-        allAnswers: [],
-        helpWasUsed: false,
-        usedExtraTime: false,
-        isTimeUp: false,
-        score: 0,
-        timeSpent: 0,
-    }
-    const INITIAL_QUENTION_DATA = {
-        question: "",
-        allAnswers: [],
-        showAnswers: [],
-    }
     
     export default {
         name: "QuestionCards",
@@ -71,8 +54,8 @@
         },
         data() {
             return {
-                questionData: {...INITIAL_QUENTION_DATA},
-                result: {...INITIAL_RESULT},
+                questionData: {...service.getQustionData()},
+                result: {...service.getResult()},
                 answersResult: null,
                 isBooleanQuestion: null,
                 timerKey: 0,
@@ -156,10 +139,10 @@
                 this.resetResults();
             },
             resetResults() {
-                this.result = {...INITIAL_RESULT};
+                this.result = {...service.getResult()};
             },
             resetCard() {
-                this.questionData = {...INITIAL_QUENTION_DATA};
+                this.questionData = {...service.getQustionData()};
 
                 this.selectedAnswer = null;
                 this.setAnsweredQuestion(false);

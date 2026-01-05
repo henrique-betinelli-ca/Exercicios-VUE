@@ -50,8 +50,8 @@
         },
         watch: {
             answersResult: {
-                handler(Result) {
-                    if(Result){
+                handler(result) {
+                    if(result){
                         this.loadCard(service.buildResultCard(this.answersResult.isTimeUp, this.answersResult.isCorrectAnswer));
                         this.setDisplayResult(true);
                     } 
