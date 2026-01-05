@@ -20,12 +20,12 @@
 
 <script>
 
-export default {
-    name: 'DetalhesUsuariosCabecalho',
-    props: {
-        dadosParaExibicaoDeUsuario: {
-            type: Object
+    export default {
+        name: 'DetalhesUsuariosCabecalho',
+        props: {
+            dadosParaExibicaoDeUsuario: {
+                type: Object
+            },
         },
-    },
-}
+    }
 </script>

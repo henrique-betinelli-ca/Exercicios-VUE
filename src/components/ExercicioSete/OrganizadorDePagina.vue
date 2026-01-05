@@ -19,28 +19,29 @@
 </template>
 
 <script>
+    import * as service from "../../services/ExercicioSete/Service.js"
 
-export default{
-    name: 'OrganizadorDePagina',
-    data() {
-        return {
-            numeroDeExebicoes: [6, 12, 24],
-            numeroDeExebicaoPorPagina: 12,
-            paginaAtual: 1,
-        }
-    },
-    watch: {
-        numeroDeExebicaoPorPagina: {
-            handler(numeroExebicao){
-                if(numeroExebicao) this.$emit('resultados-por-pagina-escolhido', this.numeroDeExebicaoPorPagina)
+    export default{
+        name: 'OrganizadorDePagina',
+        data() {
+            return {
+                numeroDeExebicoes: service.pegarNumeroDeExebicoes(),
+                numeroDeExebicaoPorPagina: 12,
+                paginaAtual: 1,
             }
         },
+        watch: {
+            numeroDeExebicaoPorPagina: {
+                handler(numeroExebicao){
+                    if(numeroExebicao) this.$emit('resultados-por-pagina-escolhido', this.numeroDeExebicaoPorPagina)
+                }
+            },
 
-        paginaAtual: {
-            handler(paginaAtual){
-                if(paginaAtual) this.$emit('pagina-escolhida', paginaAtual)
+            paginaAtual: {
+                handler(paginaAtual){
+                    if(paginaAtual) this.$emit('pagina-escolhida', paginaAtual)
+                }
             }
         }
     }
-}
 </script>

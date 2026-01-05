@@ -17,26 +17,27 @@
 </template>
 
 <script>
+    import * as service from "../../services/ExercicioSete/Service.js"
 
-export default {
-    name: 'DetalhesUsuarioCorpo',
-    props: {
-        dadosParaExibicaoDeUsuario: {
-            type: Object
+    export default {
+        name: 'DetalhesUsuarioCorpo',
+        props: {
+            dadosParaExibicaoDeUsuario: {
+                type: Object
+            },
         },
-    },
-    computed: {
-        formatarData() {
-            return (data) => {
-                return new Date(data).toLocaleDateString('pt-BR')
-            }
-        },
+        computed: {
+            formatarData() {
+                return (data) => {
+                    return new Date(data).toLocaleDateString('pt-BR')
+                }
+            },
 
-        formatarGenero() {
-            return (genero) => {
-                return genero === 'male' ? 'Masculino' : 'Feminino'
+            formatarGenero() {
+                return (genero) => {
+                    return genero === service.pegarGeneros().MALE ? service.pegarGeneros().MASCULINO : service.pegarGeneros().FEMININO
+                }
             }
         }
     }
-}
 </script>
