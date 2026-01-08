@@ -116,8 +116,6 @@ describe('service', () => {
     });
     describe('wrongAnswersRemover', () => {
         it('should remove only answers returned by selectAnswersToRemove', () => {
-            vi.spyOn(service, 'selectAnswersToRemove').mockReturnValue([2, 3]);
-
             const answers = [1, 2, 3, 4];
             const incorrectAnswers = [2, 3, 4];
 
@@ -125,26 +123,28 @@ describe('service', () => {
         });
     });
     describe('selectAnswersToRemove', () => {
-        it('should return [2, 3] when passing [2, 3, 4]', () => {
+        it('should return two answer for to remove', () => {
             expect(service.selectAnswersToRemove([2, 3, 4])).toEqual([2, 3]);
+            expect(service.selectAnswersToRemove([5, 6, 7])).toEqual([5, 6]);
+            expect(service.selectAnswersToRemove([1, 6, 8])).toEqual([1, 6]);
         });
     });
     describe('buildResultCard', () => {
-        it('should check if cardResult equals wrongAnswer when isTimeUp is false and isCorrectAnswer is false', () => {
+        it('should return wrong_answer constant when isTimeUp is false and isCorrectAnswer is false', () => {
             expect(service.buildResultCard(false, false)).toEqual({
                 ICON: "mdi-close-circle",
                 TITLE: "Incorrect",
                 MESSAGE: "You almost got it!",
             });
         });
-        it('should check if cardResult equals correctAnswer when isTimeUp is false and isCorrectAnswer is true', () => {
+        it('should return correct_answer constant when isTimeUp is false and isCorrectAnswer is true', () => {
             expect(service.buildResultCard(false, true)).toEqual({
                 ICON: "mdi-check-circle",
                 TITLE: "Correct",
                 MESSAGE: "Congratulations! You got it right!",
             });
         });
-        it('should check if cardResult equals timeUp when isTimeUp is true and isCorrectAnswer is true', () => {
+        it('should return time_up constant when isTimeUp is true and isCorrectAnswer is true', () => {
             expect(service.buildResultCard(true, true)).toEqual({
                 ICON: "mdi-close-circle",
                 TITLE: "Time Expired",
@@ -153,12 +153,14 @@ describe('service', () => {
         });
     });
     describe('timeSpentCalculator', () => {
-        it('should give 25 points if bonusTime is 0 and timeLeft is 5', () => {
+        it('should add 30 at bonus time and subtract timeLeft from result', () => {
             expect(service.timeSpentCalculator(0, 5)).toEqual(25);
+            expect(service.timeSpentCalculator(10, 0)).toEqual(40);
+            expect(service.timeSpentCalculator(10, 5)).toEqual(35);
         });
     });
     describe('calculateScore', () => {
-        it('should sum all scores and return 25', () => {
+        it('should sum all scores', () => {
             const result = [
                 { score: 10, timeSpent: 5 },
                 { score: 10, timeSpent: 8 },
@@ -169,7 +171,7 @@ describe('service', () => {
         });
     });
     describe('calculateTime', () => {
-        it('should sum all times and return 16', () => {
+        it('should sum all times', () => {
             const result = [
                 { score: 10, timeSpent: 5 },
                 { score: 10, timeSpent: 8 },
