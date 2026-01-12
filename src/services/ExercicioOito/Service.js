@@ -47,7 +47,7 @@ export function calculateResult({selectedAnswer, correctAnswer, helpWasUsed, use
 export function wrongAnswersRemover(answers, incorrectAnswers) {
     return answers.filter(options => !selectAnswersToRemove(incorrectAnswers).includes(options));
 }
-function selectAnswersToRemove(incorrectAnswers) {
+export function selectAnswersToRemove(incorrectAnswers) {
     return incorrectAnswers.slice(0, 2);
 }
 export function buildResultCard(isTimeUp, isCorrectAnswer) {
