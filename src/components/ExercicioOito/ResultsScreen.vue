@@ -66,7 +66,6 @@
             prepareQuestionsForDisplay() {
                 this.completedQuestions = this.questionResults.map(question => ({
                     question: question.question,
-                    isCorrectAnswer: question.isCorrectAnswer,
                     answer: question.answer,
                     allAnswers: question.allAnswers,
                 }));
