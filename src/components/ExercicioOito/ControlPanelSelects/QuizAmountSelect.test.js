@@ -9,24 +9,38 @@ describe('QuizAmountSelect', () => {
     const mountComponent =  () =>
         shallowMount(QuizAmountSelect, {
             global: {
-                stubs: ['v-select']
+                stubs: {
+                    VSelect: {
+                        name: 'VSelect',
+                        props: ['modelValue', 'items'],
+                        emits: ['update:modelValue'],
+                        template: `
+                            <select :value="modelValue">
+                            <option v-for="item in items" :key="item" :value="item">
+                                {{ item }}
+                            </option>
+                            </select>
+                        `
+                    }
+                }
             }
         });
     it('should load the options', () => {
         const amountOptions = [5, 10];
         service.getAmountOptions.mockReturnValue(amountOptions);
-        const wrapper = mountComponent();
 
-        expect(service.getAmountOptions).toHaveBeenCalled();
-        expect(wrapper.vm.amountOptions).toEqual(amountOptions);
-        expect(wrapper.vm.chosenAmount).toEqual(5);
+        const wrapper = mountComponent();
+        const vSelect = wrapper.findComponent({name: 'VSelect'});
+
+        expect(service.getAmountOptions).toHaveBeenCalledTimes(1);
+        expect(vSelect.element.value).toEqual('5');
     });
     it("should emit amount-selected when the value changes", async () => {
         const wrapper = mountComponent();
         const vSelect = wrapper.findComponent({name: 'VSelect'});
         await vSelect.vm.$emit('update:modelValue', 10);
 
-        expect(wrapper.emitted('amount-selected')).toBeTruthy();
+        expect(wrapper.emitted('amount-selected').length).toEqual(1);
         expect(wrapper.emitted('amount-selected')[0]).toEqual([10]);
     });
 });

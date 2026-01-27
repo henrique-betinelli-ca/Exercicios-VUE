@@ -1,6 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
-import QuizControlPanel from './QuizControlPanel.vue';
+import QuizControlPanel from '../../components/ExercicioOito/QuizControlPanel.vue';
+import QuizCategorySelect from '../../components/ExercicioOito/ControlPanelSelects/QuizCategorySelect.vue';
+import QuizDifficultySelect from '../../components/ExercicioOito/ControlPanelSelects/QuizDifficultySelect.vue';
+import QuizTypeSelect from '../../components/ExercicioOito/ControlPanelSelects/QuizTypeSelect.vue';
+import QuizAmountSelect from '../../components/ExercicioOito/ControlPanelSelects/QuizAmountSelect.vue';
 import * as service from '@/services/ExercicioOito/Service.js';
 
 vi.mock("@/services/ExercicioOito/Service.js");
@@ -9,63 +13,123 @@ describe('QuizControlPanel', () => {
     const mountComponent = propsData =>
         shallowMount(QuizControlPanel, {
             propsData,
-        });
-    it('should call feedbackAlert with errorFetchingQuestions when isFetchError is received', async () => {
-        service.getAmountOptions.mockReturnValue(5);
-        service.getFeedbackAlertMesseges.mockReturnValue({
-            ERROR_FETCHING_QUESTIONS: {
-                TITLE: 'Failed to fetch questions.',
-                MESSAGE: 'An error occurred while fetching the questions. Please try again later.',
-                TYPE: 'error',
+            global: {
+                stubs: {
+                    VAlert: {
+                        name: 'VAlert',
+                        props: ['title', 'text', 'type'],
+                        template: '<div class="v-alert-stub"></div>'
+                    },
+                    VBtn: {
+                        name: 'VBtn',
+                        template: '<button><slot /></button>'
+                    }
+                }
             }
         });
+    it('should update filterControls.category when category-selected is emitted', async () => {
+        service.getAmountOptions.mockReturnValue([5, 10]);
         const wrapper = mountComponent();
-        const spyFeedbackAlert  = vi.spyOn(wrapper.vm, 'feedbackAlert');
-        await wrapper.setProps({isFetchError: true});
 
-        expect(spyFeedbackAlert ).toHaveBeenCalledWith({
-            TITLE: 'Failed to fetch questions.',
-            MESSAGE: 'An error occurred while fetching the questions. Please try again later.',
-            TYPE: 'error',
-        });
+        const button = wrapper.findComponent({name: 'VBtn'});
+        await button.trigger('click');
+
+        expect(wrapper.emitted('quiz-control-past')[0][0].difficulty).toEqual(null);
+
+        wrapper.findComponent(QuizCategorySelect).vm.$emit('category-selected', 11);
+        await button.trigger('click');
+
+        expect(wrapper.emitted('quiz-control-past')[0][0].category).toEqual(11);
     });
-    it('should call feedbackAlert with errorFetchingCategories when categoryDataFetchFailed is called', () => {
-        service.getAmountOptions.mockReturnValue(5);
+    it('should update filterControls.difficulty when difficulty-selected is emitted', async () => {
+        service.getAmountOptions.mockReturnValue([5, 10]);
+        const wrapper = mountComponent();
+
+        const button = wrapper.findComponent({name: 'VBtn'});
+        await button.trigger('click');
+
+        expect(wrapper.emitted('quiz-control-past')[0][0].difficulty).toEqual(null);
+
+        wrapper.findComponent(QuizDifficultySelect).vm.$emit('difficulty-selected', 'hard');
+        await button.trigger('click');
+
+        expect(wrapper.emitted('quiz-control-past')[0][0].difficulty).toEqual('hard');
+    });
+    it('should update filterControls.type when type-selected is emitted', async () => {
+        service.getAmountOptions.mockReturnValue([5, 10]);
+        const wrapper = mountComponent();
+
+        const button = wrapper.findComponent({name: 'VBtn'});
+        await button.trigger('click');
+
+        expect(wrapper.emitted('quiz-control-past')[0][0].type).toEqual(null);
+
+        wrapper.findComponent(QuizTypeSelect).vm.$emit('type-selected', 'multiple');
+        await button.trigger('click');
+
+        expect(wrapper.emitted('quiz-control-past')[0][0].type).toEqual('multiple');
+    });
+    it('should update filterControls.amount when amount-selected is emitted', async () => {
+        service.getAmountOptions.mockReturnValue([5, 10]);
+        const wrapper = mountComponent();
+
+        const button = wrapper.findComponent({name: 'VBtn'});
+        await button.trigger('click');
+
+        expect(wrapper.emitted('quiz-control-past')[0][0].amount).toEqual(5);
+
+        wrapper.findComponent(QuizAmountSelect).vm.$emit('amount-selected', 10);
+        await button.trigger('click');
+
+        expect(wrapper.emitted('quiz-control-past')[0][0].amount).toEqual(10);
+    });
+    it('should show alert when category fetch fails', async () => {
+        service.getAmountOptions.mockReturnValue([5, 10]);
         service.getFeedbackAlertMesseges.mockReturnValue({
             ERROR_FETCHING_CATEGORIES: {
                 TITLE: 'Failed to fetch categories.',
                 MESSAGE: 'An error occurred while fetching the categories. To continue, the random mode has been selected.',
-                TYPE: 'error',
+                TYPE: 'error'
             }
         });
         const wrapper = mountComponent();
-        const spyFeedbackAlert  = vi.spyOn(wrapper.vm, 'feedbackAlert');
-        wrapper.vm.categoryDataFetchFailed();
 
-        expect(spyFeedbackAlert ).toHaveBeenCalledWith({
-            TITLE: 'Failed to fetch categories.',
-            MESSAGE: 'An error occurred while fetching the categories. To continue, the random mode has been selected.',
-            TYPE: 'error',
-        });
+        const categorySelect = wrapper.findComponent(QuizCategorySelect);
+        categorySelect.vm.$emit('category-data-fetch-failed');
+        await wrapper.vm.$nextTick();
+
+        const alert = wrapper.findComponent({name: 'VAlert'});
+
+        expect(alert.props().title).toEqual('Failed to fetch categories.');
+        expect(alert.props().text).toEqual('An error occurred while fetching the categories. To continue, the random mode has been selected.');
+        expect(alert.props().type).toEqual('error');
     });
-    it('should fill alertReturn with the parameters passed to feedbackAlert', () => {
-        vi.useFakeTimers();
+    it('should emit quiz-control-past with the provided data', async () => {
+        service.getAmountOptions.mockReturnValue([5, 10]);
         const wrapper = mountComponent();
-        wrapper.vm.feedbackAlert({
-            TITLE: 'title-test',
-            MESSAGE: 'message-test',
-            TYPE: 'type-test',
+
+        const button = wrapper.findComponent({name: 'VBtn'});
+        await button.trigger('click');
+
+        expect(wrapper.emitted('quiz-control-past')[0][0]).toEqual({
+            category: null,
+            difficulty: null,
+            type: null,
+            amount: 5
         });
 
-        expect(wrapper.vm.alertReturn).toEqual({
-            title: 'title-test',
-            message: 'message-test',
-            type: 'type-test',
-            status: true
-        });
-        
-        vi.advanceTimersByTime(10000);
+        wrapper.findComponent(QuizCategorySelect).vm.$emit('category-selected', 21);
+        wrapper.findComponent(QuizAmountSelect).vm.$emit('amount-selected', 10);
+        wrapper.findComponent(QuizDifficultySelect).vm.$emit('difficulty-selected', 'hard');
+        wrapper.findComponent(QuizTypeSelect).vm.$emit('type-selected', 'multiple');
 
-        expect(wrapper.vm.alertReturn.status).toBe(false);
+        await button.trigger('click');
+
+        expect(wrapper.emitted('quiz-control-past')[0][0]).toEqual({
+            category: 21,
+            difficulty: 'hard',
+            type: 'multiple',
+            amount: 10
+        });
     });
 });

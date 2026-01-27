@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import GameScreen from './GameScreen.vue';
+import QuestionCards from './QuestionCards.vue';
 import * as service from '@/services/ExercicioOito/Service.js';
 
 vi.mock("@/services/ExercicioOito/Service.js");
@@ -10,53 +11,45 @@ describe('GameScreen', () => {
         shallowMount(GameScreen, {
             propsData,
         });
-    it('should load questions from API', async () => {
-        const fakeQuestion = [
-            {question: 'question 1'},
-            {question: 'question 2'},
+    it('should show a loading state while the questions are not yet available', async () => {
+        service.getQuestions.mockResolvedValue([]);
+
+        const wrapper = mountComponent();
+        const p = wrapper.find('p')
+
+        expect(p.text()).toEqual('loading...');
+    });
+    it('should send the first question to QuestionCards', async () => {
+        const questions = [
+            { question: 'Pergunta 1' },
+            { question: 'Pergunta 2' }
         ];
-        service.getQuestions.mockResolvedValue(fakeQuestion);
-        const wrapper = mountComponent({
-            questionFilters: {amount: 5}
-        });
-        await Promise.resolve();
 
-        expect(service.getQuestions).toHaveBeenCalledWith({amount: 5});
-        expect(wrapper.vm.questions).toEqual(fakeQuestion);
-    });
-    it('should emit questions-fetch-failed when questions fetch error', async () => {
-        service.getQuestions.mockRejectedValue('error');
-        const wrapper = mountComponent({
-            questionFilters: {amount: 5},
-        });
-        await Promise.resolve();
+        service.getQuestions.mockResolvedValue(questions);
 
-        expect(wrapper.emitted('questions-fetch-failed')).toBeTruthy();
-    });
-    it('should reset index and answers when isPlayAgain is true', async () => {
-        const wrapper = mountComponent({
-            questionFilters: {amount: 5},
-            isPlayAgain: false
-        });
-        wrapper.vm.answers = ['a', 'b'];
-        wrapper.vm.questionIndex = 2;
-        await wrapper.setProps({isPlayAgain: true});
+        const wrapper = mountComponent();
+        await wrapper.vm.$nextTick();
 
-        expect(wrapper.vm.answers).toEqual([]);
-        expect(wrapper.vm.questionIndex).toEqual(0);
+        const questionCards = wrapper.findComponent(QuestionCards);
+
+        expect(questionCards.props('currentQuestion')).toEqual(questions[0]);
     });
-    it('should emit game-ended when last question is answered', async () => {
-        const fakeQuestion = [
-            {question: 'question 1'},
-            {question: 'question 2'},
+    it('should go to the next question when question-answered is emitted', async () => {
+        const questions = [
+            { question: 'Pergunta 1' },
+            { question: 'Pergunta 2' }
         ];
-        service.getQuestions.mockResolvedValue(fakeQuestion);
-        const wrapper = mountComponent({
-            questionFilters: {amount: 5},
-        });
-        wrapper.vm.questionController('a');
-        wrapper.vm.questionController('b');
 
-        expect(wrapper.emitted('game-ended')).toBeTruthy();
+        service.getQuestions.mockResolvedValue(questions);
+
+        const wrapper = mountComponent();
+        await wrapper.vm.$nextTick();
+
+        const questionCards = wrapper.findComponent(QuestionCards);
+
+        questionCards.vm.$emit('question-answered');
+        await wrapper.vm.$nextTick();
+
+        expect(questionCards.props('currentQuestion')).toEqual(questions[1]);
     });
 });

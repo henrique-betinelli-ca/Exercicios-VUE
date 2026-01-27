@@ -9,7 +9,20 @@ describe('QuizCategorySelect', () => {
     const mountComponent = () =>
         shallowMount(QuizCategorySelect, {
             global: {
-                stubs: ['v-select']
+                stubs: {
+                    VSelect: {
+                        name: 'VSelect',
+                        props: ['modelValue', 'items'],
+                        emits: ['update:modelValue'],
+                        template: `
+                            <select :value="modelValue">
+                            <option v-for="item in items" :key="item" :value="item">
+                                {{ item }}
+                            </option>
+                            </select>
+                        `
+                    }
+                }
             }
         });
     it('should fetch categories when opening the menu', async () => {
@@ -18,27 +31,33 @@ describe('QuizCategorySelect', () => {
             { id: 2, name: 'Sports' }
         ];
         const wrapper = mountComponent();
+
         const vSelect = wrapper.findComponent({name: 'VSelect'});
+
         service.getCategories.mockResolvedValue(fakeCategories);
+
         await vSelect.vm.$emit('update:menu');
 
-        expect(service.getCategories).toHaveBeenCalled();
-        expect(wrapper.vm.categoriesOptions).toEqual(fakeCategories);
+        expect(service.getCategories).toHaveBeenCalledTimes(1);
     });
     it('should emit category-selected when a category is selected', async () => {
         const wrapper = mountComponent();
+
         const vSelect = wrapper.findComponent({name: 'VSelect'});
         await vSelect.vm.$emit('update:modelValue', 2);
 
-        expect(wrapper.emitted('category-selected')).toBeTruthy();
+        expect(wrapper.emitted('category-selected').length).toEqual(1);
         expect(wrapper.emitted('category-selected')[0]).toEqual([2]);
     });
     it('should emit category-data-fetch-failed when the API request fails', async () => {
         const wrapper = mountComponent();
+
         const vSelect = wrapper.findComponent({name: 'VSelect'});
+
         service.getCategories.mockRejectedValue(new Error('API error'));
+
         await vSelect.vm.$emit('update:menu');
 
-        expect(wrapper.emitted('category-data-fetch-failed')).toBeTruthy();
+        expect(wrapper.emitted('category-data-fetch-failed').length).toEqual(1);
     });
 });

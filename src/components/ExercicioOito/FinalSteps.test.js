@@ -14,16 +14,18 @@ describe('FinalSteps', () => {
         });
     it('should emit play-again-requested when clicking the button', async () => {
         const wrapper = mountComponent();
+
         const firstButton = wrapper.findAllComponents({name: 'VBtn'}).at(0);
         await firstButton.trigger('click');
 
-        expect(wrapper.emitted('play-again-requested')).toBeTruthy();
+        expect(wrapper.emitted('play-again-requested').length).toEqual(1);
     });
     it('should emit back-home-requested when clicking the button', async () => {
         const wrapper = mountComponent();
+        
         const secondButton = wrapper.findAllComponents({name: 'VBtn'}).at(1);
         await secondButton.trigger('click');
 
-        expect(wrapper.emitted('back-home-requested')).toBeTruthy();
+        expect(wrapper.emitted('back-home-requested').length).toEqual(1);
     });
 });

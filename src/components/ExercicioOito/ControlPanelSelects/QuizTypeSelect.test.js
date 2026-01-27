@@ -9,7 +9,20 @@ describe('QuizTypeSelect', () => {
     const mountComponent =  () =>
         shallowMount(QuizTypeSelect, {
             global: {
-                stubs: ['v-select']
+                stubs: {
+                    VSelect: {
+                        name: 'VSelect',
+                        props: ['modelValue', 'items'],
+                        emits: ['update:modelValue'],
+                        template: `
+                            <select :value="modelValue">
+                            <option v-for="item in items" :key="item" :value="item">
+                                {{ item }}
+                            </option>
+                            </select>
+                        `
+                    }
+                }
             }
         });
     it('should load the options', () => {
@@ -18,17 +31,19 @@ describe('QuizTypeSelect', () => {
             "boolean"
         ];
         service.getTypeOptions.mockReturnValue(typeOptions);
-        const wrapper = mountComponent();
 
-        expect(service.getTypeOptions).toHaveBeenCalled();
-        expect(wrapper.vm.typeOptions).toEqual(typeOptions);
+        const wrapper = mountComponent();
+        const vSelect = wrapper.findComponent({name: 'VSelect'});
+
+        expect(service.getTypeOptions).toHaveBeenCalledTimes(1);
+        expect(vSelect.props('items')).toEqual(typeOptions);
     });
     it("should emit type-selected when the value changes", async () => {
         const wrapper = mountComponent();
         const vSelect = wrapper.findComponent({name: 'VSelect'});
         await vSelect.vm.$emit('update:modelValue', 'multiple');
 
-        expect(wrapper.emitted('type-selected')).toBeTruthy();
+        expect(wrapper.emitted('type-selected').length).toEqual(1);
         expect(wrapper.emitted('type-selected')[0]).toEqual(['multiple']);
     });
 });

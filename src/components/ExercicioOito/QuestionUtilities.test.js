@@ -23,40 +23,50 @@ describe('QuestionUtilities', () => {
     it('should decrease the time every second', async () => {
         const wrapper = mountComponent();
         vi.advanceTimersByTime(3000);
+
         await wrapper.vm.$nextTick();
 
-        expect(wrapper.vm.timeLeft).toEqual(27);
+        const timer = wrapper.find('h6');
+
+        expect(timer.text()).toEqual('Timer: 27s');
     });
-    it('hould emit time-expired when the time run out', async () => {
+    it('should emit time-expired when the time run out', async () => {
         const wrapper = mountComponent();
         vi.runAllTimers();
 
-        expect(wrapper.emitted('time-expired')).toBeTruthy();
+        expect(wrapper.emitted('time-expired').length).toEqual(1);
     });
     it('should add 10 seconds and emit time-bonus-used', async () => {
         const wrapper = mountComponent();
+
         const firstButton = wrapper.findAllComponents({name: 'VBtn'}).at(0);
+        expect(firstButton.attributes('disabled')).toBeUndefined();
         await firstButton.trigger('click');
 
-        expect(wrapper.vm.timeLeft).toEqual(40);
-        expect(wrapper.vm.timeBonusUsed).toEqual(true);
-        expect(wrapper.emitted('time-bonus-used')).toBeTruthy();
+        const timer = wrapper.find('h6');
+
+        expect(firstButton.attributes('disabled')).toBeDefined();
+        expect(timer.text()).toEqual('Timer: 40s');
+        expect(wrapper.emitted('time-bonus-used').length).toEqual(1);
     });
     it('should emit updated-time when paused', async () => {
         service.timeSpentCalculator.mockReturnValue(25)
         const wrapper = mountComponent();
+
         await wrapper.setProps({pausedTime: true});
 
-        expect(service.timeSpentCalculator).toHaveBeenCalled();
-        expect(wrapper.emitted('updated-time')).toBeTruthy();
+        expect(service.timeSpentCalculator).toHaveBeenCalledTimes(1);
+        expect(wrapper.emitted('updated-time').length).toEqual(1);
         expect(wrapper.emitted('updated-time')[0][0]).toEqual(25);
     });
     it('should emit requested-facilitator when the button is clicked', async () => {
         const wrapper = mountComponent();
+
         const secondButton = wrapper.findAllComponents({name: 'VBtn'}).at(1);
+        expect(secondButton.attributes('disabled')).toBeUndefined();
         await secondButton.trigger('click');
 
-        expect(wrapper.vm.helpUsed).toEqual(true);
-        expect(wrapper.emitted('requested-facilitator')).toBeTruthy();
+        expect(secondButton.attributes('disabled')).toBeDefined();
+        expect(wrapper.emitted('requested-facilitator').length).toEqual(1);
     });
 });

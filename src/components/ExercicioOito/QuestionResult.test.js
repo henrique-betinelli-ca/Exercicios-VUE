@@ -9,52 +9,73 @@ describe('QuestionResult', () => {
     const mountComponent = propsData =>
         shallowMount(QuestionResult, {
             propsData,
+            global: {
+                stubs: {
+                    VDialog: {template: '<div><slot /></div>'},
+                    VCard: {template: '<div><slot /><slot name="actions" /></div>'},
+                    VCardTitle: {template: '<div class="title"><slot /></div>'},
+                    VCardText: {template: '<div class="text"><slot /></div>'},
+                    VIcon: {template: '<span class="icon"><slot /></span>'},
+                    VBtn: {
+                        emits: ['click'],
+                        template: '<button @click="$emit(`click`)"><slot /></button>'
+                    }
+                }
+            }
         });
-    it('should update the card when answersResult is received', async () => {
+    it('should render icon and title in v-card-title', async () => {
         service.buildResultCard.mockReturnValue({
-            ICON: 'icon-test',
-            TITLE: 'title-test',
-            MESSAGE: 'message-test'
+            ICON: "mdi-check-circle",
+            TITLE: "Correct",
+            MESSAGE: "Congratulations! You got it right!",
         });
-        const wrapper = mountComponent({answersResult: null});
-        await wrapper.setProps({answersResult: {
-            isTimeUp: false,
-            isCorrectAnswer: true
-        }});
 
-        expect(service.buildResultCard).toHaveBeenCalledWith(false, true);
-        expect(wrapper.vm.displayResult).toEqual(true);
-    });
-    it('should emit displayed-result and set displayResult to false when closeResult is called', async () => {
         const wrapper = mountComponent();
-        wrapper.vm.closeResult();
-
-        expect(wrapper.emitted('displayed-result')).toBeTruthy();
-        expect(wrapper.vm.displayResult).toEqual(false);
-    });
-    it('should fill cardResults with the parameters passed to loadCard', () => {
-        const wrapper = mountComponent({answersResult: {
-            score: 10,
+        await wrapper.setProps({
+            answersResult: {
             isTimeUp: false,
-            isCorrectAnswer: true
-        }});
-        wrapper.vm.loadCard({
-            ICON: 'icon-test',
-            TITLE: 'title-test',
-            MESSAGE: 'message-test'
-        });
-
-        expect(wrapper.vm.cardResults).toEqual({
-            icon: 'icon-test',
-            title: 'title-test',
-            message: 'message-test',
+            isCorrectAnswer: true,
             score: 10
+            }
         });
-    });
-    it('should update displayResult', () => {
-        const wrapper = mountComponent();
-        wrapper.vm.setDisplayResult(true);
 
-        expect(wrapper.vm.displayResult).toEqual(true);
-    });
+        const title = wrapper.find('.title');
+        expect(title.text()).toContain('mdi-check');
+        expect(title.text()).toContain('Correct');
+    })
+    it('should render message and score in v-card-text', async () => {
+        service.buildResultCard.mockReturnValue({
+            ICON: "mdi-check-circle",
+            TITLE: "Correct",
+            MESSAGE: "Congratulations! You got it right!",
+        });
+
+        const wrapper = mountComponent();
+        await wrapper.setProps({
+                answersResult: {
+                isTimeUp: false,
+                isCorrectAnswer: true,
+                score: 10
+            }
+        });
+
+        const text = wrapper.find('.text');
+        expect(text.text()).toContain('Congratulations! You got it right!');
+        expect(text.text()).toContain('+ 10 points');
+    })
+    it('should emit displayed-result when next button is clicked', async () => {
+        const wrapper = mountComponent();
+        await wrapper.setProps({
+                answersResult: {
+                isTimeUp: false,
+                isCorrectAnswer: true,
+                score: 10
+            }
+        });
+
+        const button = wrapper.find('button');
+        await button.trigger('click');
+
+        expect(wrapper.emitted('displayed-result').length).toEqual(1);
+    })
 });

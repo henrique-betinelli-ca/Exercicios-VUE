@@ -1,21 +1,22 @@
 import { describe, it, expect, vi } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import QuestionCards from './QuestionCards.vue';
+import QuestionUtilities from './QuestionUtilities.vue';
+import QuestionResult from './QuestionResult.vue';
 import * as service from '@/services/ExercicioOito/Service.js';
 
 vi.mock("@/services/ExercicioOito/Service.js");
 
 describe('QuestionCards', () => {
-    const fakeQuestion = {
-        question: 'What number does the Roman numeral XX represent?',
-        correct_answer: 20,
-        incorrect_answers: [10, 15, 5],
-        type: 'multiple'
-    };
     const mountComponent = () =>
         shallowMount(QuestionCards, {
             props: {
-                currentQuestion: fakeQuestion,
+                currentQuestion: { 
+                    type: 'multiple', 
+                    question: 'In Chemistry, how many isomers does Butanol (C4H9OH) have?', 
+                    correct_answer: 4, 
+                    incorrect_answers: [3, 5, 6] 
+                }
             },
             global: {
                 stubs: {
@@ -23,103 +24,128 @@ describe('QuestionCards', () => {
                         name: 'VBtn',
                         template: `<button @click="$emit('click')"><slot /></button>`
                     },
-                    VRadioGroup: true,
-                    VRadio: true
+                    VRadioGroup: {
+                        name: 'VRadioGroup',
+                        template: `<div><slot /></div>`
+                    },
+                    VRadio: {
+                        name: 'VRadio',
+                        props: ['label', 'value'],
+                        template: `<div class="radio">{{ label }}</div>`
+                    },
                 }
             }
         });
-    it('should process new question when currentQuestion changes', () => {
-        service.answerShuffler.mockReturnValue([10, 5, 20, 5]);
+    it('should display the question and the alternatives when they are received', () => {
+        service.getQustionData.mockReturnValue({question: '', showAnswers: []});
+        service.getResult.mockReturnValue({});
+        service.answerShuffler.mockReturnValue([3, 6, 4, 5]);
+
         const wrapper = mountComponent();
 
-        expect(wrapper.vm.questionData.question).toEqual(fakeQuestion.question);
-        expect(wrapper.vm.questionData.showAnswers.length).toEqual(4);
-        expect(wrapper.vm.isBooleanQuestion).toEqual(false);
-    });
-    it('should skip the question and emit question-answered', async () => {
-        service.getQustionData.mockReturnValue({question: '', showAnswers: [] });
-        service.getResult.mockReturnValue({isCorrectAnswer: false });
-        const wrapper = mountComponent();
-        const skipButton = wrapper.findAllComponents({name: 'VBtn' }).at(1);
-        await skipButton.trigger('click');
+        const question = wrapper.find('p');
+        const answers = wrapper.findAllComponents({name: 'VRadio'}).map(a => a.props('label'));
 
-        expect(wrapper.vm.result.isCorrectAnswer).toBe(false);
-        expect(wrapper.emitted('question-answered')).toBeTruthy();
+        expect(question.text()).toEqual('In Chemistry, how many isomers does Butanol (C4H9OH) have?');
+        expect(answers).toEqual([3, 6, 4, 5]);
     });
-    it('should call the sendQuestion function with the filled values', async () => {
-        service.calculateResult.mockReturnValue(10);
+    it('should emit answersResult when clicking send after selecting an alternative', async () => {
+        service.getQustionData.mockReturnValue({question: '', showAnswers: []});
         service.getResult.mockReturnValue({
+            question: '',
+            allAnswers: [3, 6, 4, 5],
+            helpWasUsed: false,
+            usedExtraTime: false,
+            isTimeUp: false,
             score: 0,
-            isCorrectAnswer: false
+            timeSpent: 0
         });
+        service.answerShuffler.mockReturnValue([3, 6, 4, 5]);
+
         const wrapper = mountComponent();
-        await wrapper.setData({
-            selectedAnswer: 20,
-            answeredQuestion: true
-        });
+
+        const radioGroup = wrapper.findComponent({name: 'VRadioGroup'});
+        await radioGroup.vm.$emit('update:modelValue', 6);
+
         const sendButton = wrapper.findAllComponents({name: 'VBtn'}).at(0);
         await sendButton.trigger('click');
+        await wrapper.vm.$nextTick();
 
-        expect(service.calculateResult).toHaveBeenCalled();
-        expect(wrapper.vm.result.score).toEqual(10);
-        expect(wrapper.vm.result.isCorrectAnswer).toEqual(true);
+        const questionResult = wrapper.findComponent(QuestionResult);
+
+        expect(questionResult.props('answersResult').answer).toEqual(6); 
+        expect(questionResult.props('answersResult').isTimeUp).toEqual(false);
     });
-    it('should emit question-answered and reset the state when calling questionController', async () => {
-        const wrapper = mountComponent();
-        wrapper.vm.answersResult = {score: 10};
-        wrapper.vm.timerPaused = true;
-        wrapper.vm.questionController();
+    it('should emit answersResult when clicking skip without selecting an alternative', async () => {
+        service.getQustionData.mockReturnValue({question: '', showAnswers: []});
+        service.getResult.mockReturnValue({});
+        service.answerShuffler.mockReturnValue([3, 6, 4, 5]);
 
-        expect(wrapper.vm.answersResult).toBe(null);
-        expect(wrapper.vm.timerPaused).toBe(false);
-        expect(wrapper.emitted('question-answered')).toBeTruthy();
+        const wrapper = mountComponent();
+
+        const skipButton = wrapper.findAllComponents({name: 'VBtn'}).at(1);
+        await skipButton.trigger('click');
+
+        expect(wrapper.emitted('question-answered')[0][0].answer).toEqual(null);
     });
-    it('should reset the result using getResult', () => {
-        service.getResult.mockReturnValue({score: 0});
-        const wrapper = mountComponent();
-        wrapper.vm.result = {score: 10};
-        wrapper.vm.resetResults();
+    it('should pass the props to QuestionUtilities', () => {
+        service.getQustionData.mockReturnValue({question: '', showAnswers: []});
+        service.getResult.mockReturnValue({});
+        service.answerShuffler.mockReturnValue([3, 6, 4, 5]);
 
-        expect(wrapper.vm.result.score).toEqual(0);
+        const wrapper = mountComponent();
+
+        const questionUtilities = wrapper.findComponent(QuestionUtilities);
+
+        expect(questionUtilities.props('startTimer')).toEqual(1);
+        expect(questionUtilities.props('isBooleanQuestion')).toEqual(false);
+        expect(questionUtilities.props('pausedTime')).toEqual(false);
     });
-    it('should reset the card', () => {
-        service.getQustionData.mockReturnValue({showAnswers: []});
-        const wrapper = mountComponent();
-        wrapper.vm.selectedAnswer = 5;
-        wrapper.vm.answeredQuestion = true;
-        wrapper.vm.resetCard();
+    it('should remove alternatives when requested-facilitator is emitted', async () => {
+        service.getQustionData.mockReturnValue({question: '', showAnswers: []});
+        service.getResult.mockReturnValue({});
+        service.answerShuffler.mockReturnValue([3, 6, 4, 5]);
+        service.wrongAnswersRemover.mockReturnValue([6, 4]);
 
-        expect(wrapper.vm.selectedAnswer).toEqual(null);
-        expect(wrapper.vm.answeredQuestion).toEqual(false);
+        const wrapper = mountComponent();
+
+        let radios = wrapper.findAllComponents({name: 'VRadio'});
+        
+        expect(radios.length).toEqual(4);
+
+        const questionUtilities = wrapper.findComponent(QuestionUtilities);
+        questionUtilities.vm.$emit('requested-facilitator');
+        await wrapper.vm.$nextTick();
+
+        radios = wrapper.findAllComponents({name: 'VRadio'});
+
+        expect(radios.length).toEqual(2);
     });
-    it('should remove wrong answers and mark help as used', () => {
-        service.wrongAnswersRemover.mockReturnValue([20, 5]);
-        const wrapper = mountComponent();
-        wrapper.vm.questionData.showAnswers = [20, 15, 10, 5];
-        wrapper.vm.questionHelper();
+    it('should display QuestionResult when time-expired is emitted', async () => {
+        service.getQustionData.mockReturnValue({question: '', showAnswers: []});
+        service.getResult.mockReturnValue({});
+        service.answerShuffler.mockReturnValue([3, 6, 4, 5]);
 
-        expect(service.wrongAnswersRemover).toHaveBeenCalled();
-        expect(wrapper.vm.questionData.showAnswers).toEqual([20, 5]);
-        expect(wrapper.vm.result.helpWasUsed).toEqual(true);
+        const wrapper = mountComponent();
+
+        const questionResult = wrapper.findComponent(QuestionResult);
+        const questionUtilities = wrapper.findComponent(QuestionUtilities);
+        questionUtilities.vm.$emit('time-expired')
+        await wrapper.vm.$nextTick()
+
+        expect(questionResult.props('answersResult').isTimeUp).toEqual(true);
     });
-    it('should mark time as up and pause the timer', () => {
-        const wrapper = mountComponent();
-        wrapper.vm.timeExpired();
+    it('should emit question-answered when questionController is called', async () => {
+        service.getQustionData.mockReturnValue({question: '', showAnswers: []});
+        service.getResult.mockReturnValue({});
+        service.answerShuffler.mockReturnValue([3, 6, 4, 5]);
 
-        expect(wrapper.vm.result.isTimeUp).toEqual(true);
-        expect(wrapper.vm.timerPaused).toEqual(true);
-        expect(wrapper.vm.answersResult).toBeTruthy();
-    });
-    it('should update answeredQuestion', () => {
         const wrapper = mountComponent();
-        wrapper.vm.setAnsweredQuestion(true);
 
-        expect(wrapper.vm.answeredQuestion).toEqual(true);
-    });
-    it('should update timerPaused', () => {
-        const wrapper = mountComponent();
-        wrapper.vm.setTimerPaused(true);
+        const questionResult = wrapper.findComponent(QuestionResult);
+        questionResult.vm.$emit('displayed-result')
+        await wrapper.vm.$nextTick()
 
-        expect(wrapper.vm.timerPaused).toEqual(true);
+        expect(wrapper.emitted('question-answered').length).toEqual(1);
     });
 });
