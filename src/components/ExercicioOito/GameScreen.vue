@@ -46,7 +46,7 @@
         watch: {
             questionFilters: {
                 handler() {
-                    this.getQuestions();
+                    this.processQuestions();
                 },
                 deep: true,
                 immediate: true,
@@ -63,13 +63,12 @@
             }
         },
         methods: {
-            async getQuestions() {
-                await fetch(service.queryGenerator(this.questionFilters))
-                .then(resp => resp.json())
-                .then(data => this.questions = data.results || [])
-                .catch(error => {
+            async processQuestions() {
+                try {
+                    this.questions = await service.getQuestions(this.questionFilters);
+                } catch(error) {
                     if(error) this.$emit("questions-fetch-failed");
-                })
+                }
             },
             questionController(answer) {
                 this.answers.push(answer);
