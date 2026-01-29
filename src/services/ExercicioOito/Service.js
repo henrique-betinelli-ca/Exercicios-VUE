@@ -1,4 +1,4 @@
-export { getCategories, queryGenerator } from "./Resource.js";
+export { getCategories, getQuestions } from "./Resource.js";
 import { FEEDBACK_ALERT_MESSAGES, SCREENS, CARD_RESULTS_CONTENTS, AMOUNT_OPTIONS, DIFFICULTY_OPTIONS, TYPE_OPTIONS, RESULT, QUENTION_DATA } from "./Constants.js";
 
 export function getFeedbackAlertMesseges() {
