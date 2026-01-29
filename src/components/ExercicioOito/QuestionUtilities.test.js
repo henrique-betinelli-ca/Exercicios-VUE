@@ -30,13 +30,13 @@ describe('QuestionUtilities', () => {
 
         expect(timer.text()).toEqual('Timer: 27s');
     });
-    it('should emit time-expired when the time run out', async () => {
+    it('should emit time-expired when the time run out', () => {
         const wrapper = mountComponent();
         vi.runAllTimers();
 
         expect(wrapper.emitted('time-expired').length).toEqual(1);
     });
-    it('should add 10 seconds and emit time-bonus-used', async () => {
+    it('should add 10 seconds and emit time-bonus-used when add time bonus', async () => {
         const wrapper = mountComponent();
 
         const firstButton = wrapper.findAllComponents({name: 'VBtn'}).at(0);

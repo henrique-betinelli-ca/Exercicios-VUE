@@ -11,7 +11,7 @@ describe('GameScreen', () => {
         shallowMount(GameScreen, {
             propsData,
         });
-    it('should show a loading state while the questions are not yet available', async () => {
+    it('should show a loading state while the questions are not yet available', () => {
         service.getQuestions.mockResolvedValue([]);
 
         const wrapper = mountComponent();

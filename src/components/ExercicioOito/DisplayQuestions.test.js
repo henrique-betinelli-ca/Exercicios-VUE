@@ -25,23 +25,34 @@ describe('DisplayQuestions', () => {
                 }
             }
         });
-    it('should emit questions-for-display-requested when the view result button is clicked', async () => {
+    it('should emit questions-for-display-requested when the view result button is clicked', () => {
         const wrapper = mountComponent();
 
         const button = wrapper.findComponent({name: 'VBtn'});
-        await button.trigger('click');
+        button.trigger('click');
 
         expect(wrapper.emitted('questions-for-display-requested').length).toEqual(1);
+    });
+    it('should not display answered question before clicking the button', () => {
+        const wrapper = mountComponent();
+
+        const button = wrapper.findComponent({name: 'VBtn'});
+        const p = wrapper.find('p');
+        const radios = wrapper.findAllComponents({name: 'VRadio'});
+
+        expect(button.exists()).toEqual(true);
+        expect(p.exists()).toEqual(false);
+        expect(radios.length).toEqual(0);
     });
     it('should display the answered questions when the button is clicked', async () => {
         const wrapper = mountComponent();
 
-        await wrapper.setProps({
+        wrapper.setProps({
             completedQuestions: [{question: "Human cells typically have how many copies of each gene?", answer: 3, allAnswers: [3, 2, 1, 4]}]
         });
 
         const button = wrapper.findComponent({name: 'VBtn'});
-        await button.trigger('click');
+        button.trigger('click');
         await wrapper.vm.$nextTick();
 
         const p = wrapper.find('p');

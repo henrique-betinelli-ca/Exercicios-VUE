@@ -49,7 +49,7 @@ describe('QuestionCards', () => {
         expect(question.text()).toEqual('In Chemistry, how many isomers does Butanol (C4H9OH) have?');
         expect(answers).toEqual([3, 6, 4, 5]);
     });
-    it('should emit answersResult when clicking send after selecting an alternative', async () => {
+    it('should set answersResult when clicking send after selecting an alternative', async () => {
         service.getQustionData.mockReturnValue({question: '', showAnswers: []});
         service.getResult.mockReturnValue({
             question: '',
@@ -68,7 +68,7 @@ describe('QuestionCards', () => {
         await radioGroup.vm.$emit('update:modelValue', 6);
 
         const sendButton = wrapper.findAllComponents({name: 'VBtn'}).at(0);
-        await sendButton.trigger('click');
+        sendButton.trigger('click');
         await wrapper.vm.$nextTick();
 
         const questionResult = wrapper.findComponent(QuestionResult);
@@ -76,7 +76,7 @@ describe('QuestionCards', () => {
         expect(questionResult.props('answersResult').answer).toEqual(6); 
         expect(questionResult.props('answersResult').isTimeUp).toEqual(false);
     });
-    it('should emit answersResult when clicking skip without selecting an alternative', async () => {
+    it('should emit question-answered when clicking skip without selecting an alternative', () => {
         service.getQustionData.mockReturnValue({question: '', showAnswers: []});
         service.getResult.mockReturnValue({});
         service.answerShuffler.mockReturnValue([3, 6, 4, 5]);
@@ -84,7 +84,7 @@ describe('QuestionCards', () => {
         const wrapper = mountComponent();
 
         const skipButton = wrapper.findAllComponents({name: 'VBtn'}).at(1);
-        await skipButton.trigger('click');
+        skipButton.trigger('click');
 
         expect(wrapper.emitted('question-answered')[0][0].answer).toEqual(null);
     });

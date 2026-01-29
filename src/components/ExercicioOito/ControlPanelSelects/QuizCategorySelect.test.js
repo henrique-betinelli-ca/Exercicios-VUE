@@ -25,7 +25,7 @@ describe('QuizCategorySelect', () => {
                 }
             }
         });
-    it('should fetch categories when opening the menu', async () => {
+    it('should fetch categories when opening the menu', () => {
         const fakeCategories = [
             { id: 1, name: 'Science' },
             { id: 2, name: 'Sports' }
@@ -33,18 +33,16 @@ describe('QuizCategorySelect', () => {
         const wrapper = mountComponent();
 
         const vSelect = wrapper.findComponent({name: 'VSelect'});
-
         service.getCategories.mockResolvedValue(fakeCategories);
-
-        await vSelect.vm.$emit('update:menu');
+        vSelect.vm.$emit('update:menu');
 
         expect(service.getCategories).toHaveBeenCalledTimes(1);
     });
-    it('should emit category-selected when a category is selected', async () => {
+    it('should emit category-selected when a category is selected', () => {
         const wrapper = mountComponent();
 
         const vSelect = wrapper.findComponent({name: 'VSelect'});
-        await vSelect.vm.$emit('update:modelValue', 2);
+        vSelect.vm.$emit('update:modelValue', 2);
 
         expect(wrapper.emitted('category-selected').length).toEqual(1);
         expect(wrapper.emitted('category-selected')[0]).toEqual([2]);
@@ -53,9 +51,7 @@ describe('QuizCategorySelect', () => {
         const wrapper = mountComponent();
 
         const vSelect = wrapper.findComponent({name: 'VSelect'});
-
         service.getCategories.mockRejectedValue(new Error('API error'));
-
         await vSelect.vm.$emit('update:menu');
 
         expect(wrapper.emitted('category-data-fetch-failed').length).toEqual(1);

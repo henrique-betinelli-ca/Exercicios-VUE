@@ -35,10 +35,10 @@ describe('QuizAmountSelect', () => {
         expect(service.getAmountOptions).toHaveBeenCalledTimes(1);
         expect(vSelect.element.value).toEqual('5');
     });
-    it("should emit amount-selected when the value changes", async () => {
+    it("should emit amount-selected when the value changes", () => {
         const wrapper = mountComponent();
         const vSelect = wrapper.findComponent({name: 'VSelect'});
-        await vSelect.vm.$emit('update:modelValue', 10);
+        vSelect.vm.$emit('update:modelValue', 10);
 
         expect(wrapper.emitted('amount-selected').length).toEqual(1);
         expect(wrapper.emitted('amount-selected')[0]).toEqual([10]);

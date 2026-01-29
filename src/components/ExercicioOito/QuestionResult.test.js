@@ -63,9 +63,9 @@ describe('QuestionResult', () => {
         expect(text.text()).toContain('Congratulations! You got it right!');
         expect(text.text()).toContain('+ 10 points');
     })
-    it('should emit displayed-result when next button is clicked', async () => {
+    it('should emit displayed-result when next button is clicked', () => {
         const wrapper = mountComponent();
-        await wrapper.setProps({
+        wrapper.setProps({
                 answersResult: {
                 isTimeUp: false,
                 isCorrectAnswer: true,
@@ -74,7 +74,7 @@ describe('QuestionResult', () => {
         });
 
         const button = wrapper.find('button');
-        await button.trigger('click');
+        button.trigger('click');
 
         expect(wrapper.emitted('displayed-result').length).toEqual(1);
     })

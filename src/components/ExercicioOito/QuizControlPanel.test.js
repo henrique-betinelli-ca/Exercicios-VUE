@@ -27,59 +27,59 @@ describe('QuizControlPanel', () => {
                 }
             }
         });
-    it('should update filterControls.category when category-selected is emitted', async () => {
+    it('should update filterControls.category when category-selected is emitted', () => {
         service.getAmountOptions.mockReturnValue([5, 10]);
         const wrapper = mountComponent();
 
         const button = wrapper.findComponent({name: 'VBtn'});
-        await button.trigger('click');
+        button.trigger('click');
 
         expect(wrapper.emitted('quiz-control-past')[0][0].difficulty).toEqual(null);
 
         wrapper.findComponent(QuizCategorySelect).vm.$emit('category-selected', 11);
-        await button.trigger('click');
+        button.trigger('click');
 
         expect(wrapper.emitted('quiz-control-past')[0][0].category).toEqual(11);
     });
-    it('should update filterControls.difficulty when difficulty-selected is emitted', async () => {
+    it('should update filterControls.difficulty when difficulty-selected is emitted', () => {
         service.getAmountOptions.mockReturnValue([5, 10]);
         const wrapper = mountComponent();
 
         const button = wrapper.findComponent({name: 'VBtn'});
-        await button.trigger('click');
+        button.trigger('click');
 
         expect(wrapper.emitted('quiz-control-past')[0][0].difficulty).toEqual(null);
 
         wrapper.findComponent(QuizDifficultySelect).vm.$emit('difficulty-selected', 'hard');
-        await button.trigger('click');
+        button.trigger('click');
 
         expect(wrapper.emitted('quiz-control-past')[0][0].difficulty).toEqual('hard');
     });
-    it('should update filterControls.type when type-selected is emitted', async () => {
+    it('should update filterControls.type when type-selected is emitted', () => {
         service.getAmountOptions.mockReturnValue([5, 10]);
         const wrapper = mountComponent();
 
         const button = wrapper.findComponent({name: 'VBtn'});
-        await button.trigger('click');
+        button.trigger('click');
 
         expect(wrapper.emitted('quiz-control-past')[0][0].type).toEqual(null);
 
         wrapper.findComponent(QuizTypeSelect).vm.$emit('type-selected', 'multiple');
-        await button.trigger('click');
+        button.trigger('click');
 
         expect(wrapper.emitted('quiz-control-past')[0][0].type).toEqual('multiple');
     });
-    it('should update filterControls.amount when amount-selected is emitted', async () => {
+    it('should update filterControls.amount when amount-selected is emitted', () => {
         service.getAmountOptions.mockReturnValue([5, 10]);
         const wrapper = mountComponent();
 
         const button = wrapper.findComponent({name: 'VBtn'});
-        await button.trigger('click');
+        button.trigger('click');
 
         expect(wrapper.emitted('quiz-control-past')[0][0].amount).toEqual(5);
 
         wrapper.findComponent(QuizAmountSelect).vm.$emit('amount-selected', 10);
-        await button.trigger('click');
+        button.trigger('click');
 
         expect(wrapper.emitted('quiz-control-past')[0][0].amount).toEqual(10);
     });
@@ -104,12 +104,31 @@ describe('QuizControlPanel', () => {
         expect(alert.props().text).toEqual('An error occurred while fetching the categories. To continue, the random mode has been selected.');
         expect(alert.props().type).toEqual('error');
     });
-    it('should emit quiz-control-past with the provided data', async () => {
+    it('should show alert when questions fetch fails', async () => {
+        service.getFeedbackAlertMesseges.mockReturnValue({
+            ERROR_FETCHING_QUESTIONS: {
+                TITLE: "Failed to fetch questions.",
+                MESSAGE: "An error occurred while fetching the questions. Please try again later.",
+                TYPE: "error",
+            }
+        });
+        const wrapper = mountComponent();
+
+        wrapper.setProps({isFetchError: true});
+        await wrapper.vm.$nextTick();
+
+        const alert = wrapper.findComponent({name: 'VAlert'});
+
+        expect(alert.props().title).toEqual('Failed to fetch questions.');
+        expect(alert.props().text).toEqual('An error occurred while fetching the questions. Please try again later.');
+        expect(alert.props().type).toEqual('error');
+    });
+    it('should emit quiz-control-past with the provided data', () => {
         service.getAmountOptions.mockReturnValue([5, 10]);
         const wrapper = mountComponent();
 
         const button = wrapper.findComponent({name: 'VBtn'});
-        await button.trigger('click');
+        button.trigger('click');
 
         expect(wrapper.emitted('quiz-control-past')[0][0]).toEqual({
             category: null,
@@ -123,7 +142,7 @@ describe('QuizControlPanel', () => {
         wrapper.findComponent(QuizDifficultySelect).vm.$emit('difficulty-selected', 'hard');
         wrapper.findComponent(QuizTypeSelect).vm.$emit('type-selected', 'multiple');
 
-        await button.trigger('click');
+        button.trigger('click');
 
         expect(wrapper.emitted('quiz-control-past')[0][0]).toEqual({
             category: 21,

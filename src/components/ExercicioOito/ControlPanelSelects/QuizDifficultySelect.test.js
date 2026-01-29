@@ -39,11 +39,11 @@ describe('QuizDifficultySelect', () => {
         expect(service.getDifficultyOptions).toHaveBeenCalledTimes(1);
         expect(vSelect.props('items')).toEqual(difficultyOptions);
     });
-    it("should emit difficulty-selected when the value changes", async () => {
+    it("should emit difficulty-selected when the value changes", () => {
         const wrapper = mountComponent();
         
         const vSelect = wrapper.findComponent({name: 'VSelect'});
-        await vSelect.vm.$emit('update:modelValue', 'medium');
+        vSelect.vm.$emit('update:modelValue', 'medium');
 
         expect(wrapper.emitted('difficulty-selected').length).toEqual(1);
         expect(wrapper.emitted('difficulty-selected')[0]).toEqual(['medium']);

@@ -38,10 +38,10 @@ describe('QuizTypeSelect', () => {
         expect(service.getTypeOptions).toHaveBeenCalledTimes(1);
         expect(vSelect.props('items')).toEqual(typeOptions);
     });
-    it("should emit type-selected when the value changes", async () => {
+    it("should emit type-selected when the value changes", () => {
         const wrapper = mountComponent();
         const vSelect = wrapper.findComponent({name: 'VSelect'});
-        await vSelect.vm.$emit('update:modelValue', 'multiple');
+        vSelect.vm.$emit('update:modelValue', 'multiple');
 
         expect(wrapper.emitted('type-selected').length).toEqual(1);
         expect(wrapper.emitted('type-selected')[0]).toEqual(['multiple']);
