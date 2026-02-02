@@ -4,7 +4,13 @@ export async function getCategories() {
                     
     return data.trivia_categories;
 }
-export function queryGenerator(questionFilters) {
+export async function getQuestions(questionFilters) {
+    const resp = await fetch(queryGenerator(questionFilters));
+    const data = await resp.json();
+    
+    return data.results;
+}
+function queryGenerator(questionFilters) {
     const params = new URLSearchParams();
 
     Object.entries(questionFilters).forEach(([key, value]) => {
