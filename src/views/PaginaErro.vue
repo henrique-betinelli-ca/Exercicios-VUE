@@ -10,7 +10,7 @@
 <script>
 
   export default {
-    name: 'PaginaInicial',
+    name: 'PaginaErro',
     methods: {
       voltarParaInicio() {
         this.$router.push('/')
