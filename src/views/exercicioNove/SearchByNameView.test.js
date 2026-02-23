@@ -32,7 +32,7 @@ describe('SearchByNameView', () => {
             }));
             const wrapper = mountComponent();
             const searchSection = wrapper.findComponent(SearchSection);
-            await searchSection.vm.$emit('country-selected', 'Brazil');
+            await searchSection.vm.$emit('selected-value', 'Brazil');
             await wrapper.vm.$nextTick();
 
             expect(wrapper.findComponent(LoadingStage).exists()).toEqual(true);
@@ -51,7 +51,7 @@ describe('SearchByNameView', () => {
         service.getMainCountryData.mockReturnValue(countryData);
         const wrapper = mountComponent();
         const searchSection = wrapper.findComponent(SearchSection);
-        await searchSection.vm.$emit('country-selected', 'Brazil');
+        await searchSection.vm.$emit('selected-value', 'Brazil');
         const countryCard = wrapper.findComponent(CountryCard);
         await wrapper.vm.$nextTick();
 
@@ -62,7 +62,7 @@ describe('SearchByNameView', () => {
         service.getMainCountryData.mockRejectedValue({ type: 'COUNTRY_NOT_FOUND' });
         const wrapper = mountComponent();
         const searchSection = wrapper.findComponent(SearchSection);
-        await searchSection.vm.$emit('country-selected', 'invalidCountry');
+        await searchSection.vm.$emit('selected-value', 'invalidCountry');
         const alertsPanel = wrapper.findComponent(AlertsPanel);
         await wrapper.vm.$nextTick();
 

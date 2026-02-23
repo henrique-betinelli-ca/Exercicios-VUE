@@ -32,11 +32,10 @@ describe('AlertsPanel', () => {
         });
         const wrapper = mountComponent();
         await wrapper.setProps({ alertType: 'COUNTRY_NOT_FOUND' });
-        const alert = wrapper.find('v-alert');
 
-        expect(alert.attributes('style')).not.toContain('display: none');
+        expect(wrapper.find('v-alert').exists()).toEqual(true);
         await wrapper.setProps({ alertType: null });
-        expect(alert.attributes('style')).toContain('display: none');
+        expect(wrapper.find('v-alert').exists()).toEqual(false);
     });
     it('should hide alert after 10 seconds', async () => {
         vi.useFakeTimers();
@@ -47,13 +46,12 @@ describe('AlertsPanel', () => {
         });
         const wrapper = mountComponent();
         await wrapper.setProps({ alertType: 'COUNTRY_NOT_FOUND' });
-        const alert = wrapper.find('v-alert');
 
-        expect(alert.attributes('style')).not.toContain('display: none');
+        expect(wrapper.find('v-alert').exists()).toEqual(true);
         vi.advanceTimersByTime(10000);
         await wrapper.vm.$nextTick();
 
-        expect(alert.attributes('style')).toContain('display: none');
+        expect(wrapper.find('v-alert').exists()).toEqual(false);
         vi.useRealTimers();
     });
     it('should emit alert-closed when close event is triggered', async () => {

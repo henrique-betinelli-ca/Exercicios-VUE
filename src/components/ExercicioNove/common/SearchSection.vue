@@ -46,7 +46,11 @@
             if (this.mode == service.getSearchMode().REGION) {
                 this.items = service.getRegions();
             } else {
-                this.items = await service.getCountriesNames();
+                try {
+                    this.items = await service.getCountriesNames();
+                }catch(error) {
+                    this.$emit("error-detected", error.type);
+                }
             }
         },
         methods: {
@@ -56,21 +60,7 @@
                 }
             },
             handleSearch() {
-                if(this.selectedValue) {
-                    if (this.mode == service.getSearchMode().REGION) {
-                        this.$emit("region-selected", this.selectedValue);
-                    }
-                    if (this.mode == service.getSearchMode().NAME) {
-                        this.$emit("country-selected", this.selectedValue);
-                    }
-                }
-                if (this.mode == service.getSearchMode().COMPARISON) {
-                    if (this.selectedValue.length > 1) {
-                        this.$emit("countries-selected", this.selectedValue);
-                    } else if (this.selectedValue.length > 0) {
-                        this.$emit("comparison-selection-invalid", "NOT_ENOUGH_COUNTRIES");
-                    }
-                }
+                if(this.selectedValue) this.$emit("selected-value", this.selectedValue);
                 this.reset();
             },
             reset() {

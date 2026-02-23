@@ -164,6 +164,7 @@ describe('service', () => {
             vi.spyOn(resource, 'fetchCountriesByRegion').mockResolvedValue(mockResponse);
             expect(await service.getCountriesByRegion('americas')).toEqual(mockResponse);
             expect(resource.fetchCountriesByRegion).toHaveBeenCalledWith('americas');
+            expect(resource.fetchCountriesByRegion).toHaveBeenCalledOnce();
         });
     });
     describe('compareCountries', () => {

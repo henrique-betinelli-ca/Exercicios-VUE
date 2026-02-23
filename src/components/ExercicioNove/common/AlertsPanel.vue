@@ -1,7 +1,7 @@
 <template>
     <v-col class="d-flex flex-column align-center">
         <v-alert
-            v-show="alertData.status"
+            v-if="alertData.status"
             class="w-75"
             closable
             @click:close="closeAlert"

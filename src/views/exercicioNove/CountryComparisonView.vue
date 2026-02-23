@@ -14,8 +14,8 @@
                 <v-card class="w-75 pa-15 elevation-3">
                     <SearchSection
                         :mode="searchMode"
-                        @countries-selected="sendCountriesToCamparison"
-                        @comparison-selection-invalid="sendAlert"
+                        @selected-value="handleSelection"
+                        @error-detected="sendAlert"
                     />
                     <v-card class="pa-15 elevation-0" color="grey-lighten-4" min-height="500px">
                         <LoadingStage
@@ -57,6 +57,13 @@
             }
         },
         methods: {
+            handleSelection(value) {
+                if (value.length > 1) {
+                    this.sendCountriesToCamparison(value);
+                } else if (value.length > 0) {
+                    this.sendAlert("NOT_ENOUGH_COUNTRIES");
+                }
+            },
             async sendCountriesToCamparison(countries) {
                 this.resetComparisonCardData();
                 this.setIsLoading(true);

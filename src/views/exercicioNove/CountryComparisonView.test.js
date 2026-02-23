@@ -32,7 +32,7 @@ describe('CountryComparisonView', () => {
             }));
             const wrapper = mountComponent();
             const searchSection = wrapper.findComponent(SearchSection);
-            await searchSection.vm.$emit('countries-selected', ['Brazil', 'Argentina']);
+            await searchSection.vm.$emit('selected-value', ['Brazil', 'Argentina']);
             await wrapper.vm.$nextTick();
 
             expect(wrapper.findComponent(LoadingStage).exists()).toEqual(true);
@@ -49,7 +49,7 @@ describe('CountryComparisonView', () => {
         service.compareCountries.mockReturnValue(comparisonData);
         const wrapper = mountComponent();
         const searchSection = wrapper.findComponent(SearchSection);
-        await searchSection.vm.$emit('countries-selected', ['Canada', 'Nigeria']);
+        await searchSection.vm.$emit('selected-value', ['Canada', 'Nigeria']);
         const comparisonResult = wrapper.findComponent(ComparisonResult);
         await wrapper.vm.$nextTick();
 
@@ -59,7 +59,7 @@ describe('CountryComparisonView', () => {
         service.getSearchMode.mockReturnValue('COMPARISON');
         const wrapper = mountComponent();
         const searchSection = wrapper.findComponent(SearchSection);
-        await searchSection.vm.$emit('comparison-selection-invalid', 'NOT_ENOUGH_COUNTRIES');
+        await searchSection.vm.$emit('selected-value', ['Canada']);
         const alertsPanel = wrapper.findComponent(AlertsPanel);
         await wrapper.vm.$nextTick();
 

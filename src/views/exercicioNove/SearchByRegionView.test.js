@@ -32,7 +32,7 @@ describe('SearchByRegionView', () => {
             }));
             const wrapper = mountComponent();
             const searchSection = wrapper.findComponent(SearchSection);
-            await searchSection.vm.$emit('region-selected', 'Europe');
+            await searchSection.vm.$emit('selected-value', 'Europe');
             await wrapper.vm.$nextTick();
 
             expect(wrapper.findComponent(LoadingStage).exists()).toEqual(true);
@@ -59,7 +59,7 @@ describe('SearchByRegionView', () => {
         service.getCountriesByRegion.mockReturnValue(countriesData);
         const wrapper = mountComponent();
         const searchSection = wrapper.findComponent(SearchSection);
-        await searchSection.vm.$emit('region-selected', 'Americas');
+        await searchSection.vm.$emit('selected-value', 'Americas');
         const countryList = wrapper.findComponent(CountryList);
         await wrapper.vm.$nextTick();
 
@@ -70,7 +70,7 @@ describe('SearchByRegionView', () => {
         service.getCountriesByRegion.mockRejectedValue({ type: 'REGION_NOT_FOUND' });
         const wrapper = mountComponent();
         const searchSection = wrapper.findComponent(SearchSection);
-        await searchSection.vm.$emit('region-selected', 'invalidCountry');
+        await searchSection.vm.$emit('selected-value', 'invalidCountry');
         const alertsPanel = wrapper.findComponent(AlertsPanel);
         await wrapper.vm.$nextTick();
 

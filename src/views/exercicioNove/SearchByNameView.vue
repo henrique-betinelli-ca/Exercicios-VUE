@@ -14,7 +14,8 @@
                 <v-card class="w-75 pa-15 elevation-3">
                     <SearchSection
                         :mode="searchMode"
-                        @country-selected="sendCountryDataToCard"
+                        @selected-value="sendCountryDataToCard"
+                        @error-detected="sendAlert"
                     />
                     <v-card class="pa-15 elevation-0" color="grey-lighten-4" min-height="500px">
                         <LoadingStage
@@ -70,6 +71,9 @@
             },
             setIsLoading(value) {
                 this.isLoading = value;
+            },
+            sendAlert(value) {
+                this.alertType = value;
             },
             resetAlert() {
                 this.alertType = null;

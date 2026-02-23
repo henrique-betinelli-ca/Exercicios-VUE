@@ -33,8 +33,8 @@ describe('SearchSection', () => {
         await wrapper.setData({ selectedValue: 'Brazil' })
         await wrapper.find('v-btn').trigger('click');
 
-        expect(wrapper.emitted('country-selected').length).toEqual(1);
-        expect(wrapper.emitted('country-selected')[0][0]).toEqual('Brazil');
+        expect(wrapper.emitted('selected-value').length).toEqual(1);
+        expect(wrapper.emitted('selected-value')[0][0]).toEqual('Brazil');
     });
     it('should render the SearchSection in region mode', async () => {
         service.getSearchMode.mockReturnValue({
@@ -58,8 +58,8 @@ describe('SearchSection', () => {
         await wrapper.setData({ selectedValue: 'Europe' })
         await wrapper.find('v-btn').trigger('click');
 
-        expect(wrapper.emitted('region-selected').length).toEqual(1);
-        expect(wrapper.emitted('region-selected')[0]).toEqual(['Europe']);
+        expect(wrapper.emitted('selected-value').length).toEqual(1);
+        expect(wrapper.emitted('selected-value')[0]).toEqual(['Europe']);
     });
     it('should render the SearchSection in comparison mode', async () => {
         service.getSearchMode.mockReturnValue({
@@ -82,20 +82,15 @@ describe('SearchSection', () => {
         expect(autocomplete.attributes('label')).toEqual('Selecione os Países');
         expect(autocomplete.attributes('items')).toContain('Brazil', 'Argentina', 'Chile');
 
-        await wrapper.setData({ selectedValue: ['Brazil'] })
-        await wrapper.find('v-btn').trigger('click');
-
-        expect(wrapper.emitted('comparison-selection-invalid').length).toEqual(1);
-
         await wrapper.setData({ selectedValue: ['Brazil', 'Argentina', 'Chile'] })
         await wrapper.find('v-btn').trigger('click');
 
-        expect(wrapper.emitted('countries-selected').length).toEqual(1);
-        expect(wrapper.emitted('countries-selected')[0]).toEqual([['Brazil', 'Argentina', 'Chile']]);
+        expect(wrapper.emitted('selected-value').length).toEqual(1);
+        expect(wrapper.emitted('selected-value')[0]).toEqual([['Brazil', 'Argentina', 'Chile']]);
 
         await wrapper.setData({ selectedValue: ['Brazil', 'Argentina', 'Chile', 'Canada'] })
         await wrapper.find('v-btn').trigger('click');
 
-        expect(wrapper.emitted('countries-selected')[0]).toEqual([['Brazil', 'Argentina', 'Chile']]);
+        expect(wrapper.emitted('selected-value')[0]).toEqual([['Brazil', 'Argentina', 'Chile']]);
     });
 });

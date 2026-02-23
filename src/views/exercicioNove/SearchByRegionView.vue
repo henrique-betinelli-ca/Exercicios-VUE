@@ -14,7 +14,7 @@
                 <v-card class="w-75 pa-15 elevation-3">
                     <SearchSection
                         :mode="searchMode"
-                        @region-selected="sendRegionDataToCard"
+                        @selected-value="sendRegionDataToCard"
                     />
                     <v-card class="pa-15 elevation-0" color="grey-lighten-4" min-height="500px">
                         <LoadingStage
