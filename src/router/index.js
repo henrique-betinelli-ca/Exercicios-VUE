@@ -51,6 +51,26 @@ const routes = [
     name: 'ExercicioOito',
     component: () => import('../views/exercicios/ExercicioOito.vue')
   },
+  {
+    path: '/ExercicioNove',
+    name: 'ExercicioNove',
+    component: () => import('../views/exercicios/ExercicioNove.vue'),
+  },
+  {
+    path: '/ExercicioNove/BuscarPaises',
+    name: 'BuscarPaises',
+    component: () => import('../views/exercicioNove/SearchByNameView.vue')
+  },
+  {
+    path: '/ExercicioNove/BuscarRegiao',
+    name: 'BuscarRegiao',
+    component: () => import('../views/exercicioNove/SearchByRegionView.vue')
+  },
+  {
+    path: '/ExercicioNove/CompararPaises',
+    name: 'CompararPaises',
+    component: () => import('../views/exercicioNove/CountryComparisonView.vue')
+  }
 ]
 
 const router = createRouter({
