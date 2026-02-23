@@ -93,4 +93,18 @@ describe('SearchSection', () => {
 
         expect(wrapper.emitted('selected-value')[0]).toEqual([['Brazil', 'Argentina', 'Chile']]);
     });
+    it('should emit error-detected when getCountriesNames fails', async () => {
+        service.getSearchMode.mockReturnValue({
+            REGION : "REGION",
+            NAME: "NAME",
+            COMPARISON: "COMPARISON"
+        });
+        service.getSearchLabels.mockReturnValue("Informe o País");
+        service.getCountriesNames.mockRejectedValue({type: 'OUNTRIES_NAMES_NOT_FOUND'});
+        const wrapper = mountComponent({ mode: 'NAME' });
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.emitted('error-detected').length).toEqual(1);
+        expect(wrapper.emitted('error-detected')[0]).toEqual(['OUNTRIES_NAMES_NOT_FOUND']);
+    })
 });

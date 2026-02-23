@@ -55,7 +55,7 @@ describe('CountryComparisonView', () => {
 
         expect(comparisonResult.props('comparisonCardData')).toEqual(comparisonData);
     });
-    it('should set alertType when comparison-selection-invalid is emitted', async () => {
+    it('should set alertType when selected countries count is below required', async () => {
         service.getSearchMode.mockReturnValue('COMPARISON');
         const wrapper = mountComponent();
         const searchSection = wrapper.findComponent(SearchSection);
