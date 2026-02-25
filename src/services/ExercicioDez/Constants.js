@@ -22,3 +22,11 @@ export const WELCOME_MESSAGE = {
     TITLE: "Jogo da Velha",
     TEXT: "Neste jogo da velha 3x3, dois jogadores se alternam marcando X e O no tabuleiro. O jogador X sempre começa, e cada jogada deve ser feita em uma casa vazia."
 };
+export const PLAYERS = {
+    X: "X",
+    O: "O"
+};
+export const GAME_MESSAGES = {
+    WINNER_PREFIX: "Vencedor:",
+    DRAW: "Deu Velha!"
+}

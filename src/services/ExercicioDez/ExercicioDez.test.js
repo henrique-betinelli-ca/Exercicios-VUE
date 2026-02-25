@@ -40,6 +40,22 @@ describe('service', () => {
             });
         });
     });
+    describe('getPlayers', () => {
+        it('should return the players constant', () => {
+            expect(service.getPlayers()).toEqual({
+                X: "X",
+                O: "O"
+            });
+        });
+    });
+    describe('getGameMessages', () => {
+        it('should return the gameMessages constant', () => {
+            expect(service.getGameMessages()).toEqual({
+                WINNER_PREFIX: "Vencedor:",
+                DRAW: "Deu Velha!"
+            });
+        });
+    });
     describe('createBoard', () => {
         it('should return an array with nine empty spaces', () => {
             expect(service.createBoard()).toEqual(

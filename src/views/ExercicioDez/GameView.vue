@@ -31,7 +31,7 @@
         data() {
             return {
                 board: service.createBoard(),
-                currentPlayer: "X",
+                currentPlayer: service.getPlayers().X,
                 winner: null,
                 isGameOver: false
             }
@@ -50,7 +50,7 @@
             },
             resetGame() {
                 this.board = service.createBoard();
-                this.currentPlayer = "X";
+                this.currentPlayer = service.getPlayers().X;
                 this.winner = null;
                 this.isGameOver = false;
             }
