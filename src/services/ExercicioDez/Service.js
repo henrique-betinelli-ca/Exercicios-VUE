@@ -19,24 +19,20 @@ export function getNextPlayer(currentPlayer) {
     return currentPlayer === "X" ? "O" : "X";
 }
 export function checkWinner(board) {
-    const combination = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6]
-    ];
-    for(let combo of combination) {
-        const [a, b, c] = combo;
-        if(board[a] && board[a] === board[b] && board[a] === board[c]) {
-            return `Vencedor: ${board[a]}`;
+    const size = 3;
+    for(let i = 0; i < 9; i += size) {
+        if(board[i] && board[i] == board[i + 1] && board[i] == board[i + 2]) {
+            return `Vencedor: ${board[i]}`;
         }
     }
-    if(!board.includes('')) {
-        return "Deu Velha!";
+    for(let i = 0; i < size; i++) {
+        if(board[i] && board[i] == board[i + 3] && board[i] == board[i + 6]) {
+            return `Vencedor: ${board[i]}`;
+        }
     }
+    if(board[4] && ((board[0] == board[4] && board[4] == board[8]) || (board[2] == board[4] && board[4] == board[6]))) {
+        return `Vencedor: ${board[4]}`;
+    }
+    if(!board.includes('')) return "Deu Velha!";
     return null;
 }
