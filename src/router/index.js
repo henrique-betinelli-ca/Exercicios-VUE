@@ -54,7 +54,7 @@ const routes = [
   {
     path: '/ExercicioNove',
     name: 'ExercicioNove',
-    component: () => import('../views/exercicios/ExercicioNove.vue'),
+    component: () => import('../views/exercicios/ExercicioNove.vue')
   },
   {
     path: '/ExercicioNove/BuscarPaises',
@@ -70,6 +70,16 @@ const routes = [
     path: '/ExercicioNove/CompararPaises',
     name: 'CompararPaises',
     component: () => import('../views/exercicioNove/CountryComparisonView.vue')
+  },
+  {
+    path: '/ExercicioDez',
+    name: 'ExercicioDez',
+    component: () => import('../views/exercicios/ExercicioDez.vue')
+  },
+  {
+    path: '/ExercicioDez/Jogo',
+    name: 'JogoDaVelha',
+    component: () => import('../views/ExercicioDez/GameView.vue')
   }
 ]
 
