@@ -24,7 +24,8 @@
           'ExercicioSete',
           'ExercicioOito',
           'ExercicioNove',
-          'ExercicioDez'
+          'ExercicioDez',
+          'ExercicioOnze'
         ]
       }
     },
