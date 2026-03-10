@@ -80,6 +80,16 @@ const routes = [
     path: '/ExercicioDez/Jogo',
     name: 'JogoDaVelha',
     component: () => import('../views/ExercicioDez/GameView.vue')
+  },
+  {
+    path: '/ExercicioOnze',
+    name: 'ExercicioOnze',
+    component: () => import('../views/exercicios/ExercicioOnze.vue')
+  },
+  {
+    path: '/ExercicioOnze/Carrinho',
+    name: 'ShoppingCart',
+    component: () => import('../components/ExercicioOnze/ShoppingCartDrawer.vue')
   }
 ]
 
